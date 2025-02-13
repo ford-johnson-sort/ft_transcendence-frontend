@@ -1,0 +1,78 @@
+@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
+body {
+	background-color: Rgba(43, 43, 43);
+	font-family: 'VT323',monospace;
+	font-size: 1.5rem;
+}
+
+#topNavBar {
+	width: 100%;
+	height: 88px;
+	display: block;
+	padding-left: 20px;
+	background-color: rgba(217, 217, 217);
+}
+
+#currentUserInfo {
+	display: flex;
+	height: 100%;
+	justify-content: flex-start;
+	align-items: center;
+	gap: 20px;
+}
+
+#userInfoList {
+	width: 370px;
+	height: calc(100vh - 88px);
+	background-color: rgba(171,171,171);
+	margin-left: auto;
+}
+
+.user-card {
+	display: flex;
+	gap: 15px;
+	flex-direction: row;
+	align-items: center;
+	padding: 1rem;
+	border-radius: 0.25rem;
+	box-shadow: 0px 4px 0px rgba(0, 0, 0, 0.4);
+	margin-bottom: 0.5rem;
+}
+
+.user-info {
+	flex-grow: 1;
+}
+
+.user-action {
+	display: flex;
+	gap: 10px;
+}
+
+.user-actions i {
+	cursor: pointer;
+}
+
+.profile-img {
+	width: 60px;
+	height: 60px;
+	border-radius: 100%;
+	object-fit: cover;
+
+}
+
+.status-indicator {
+	width: 1rem;
+	height: 1rem;
+	border-radius: 50%;
+	position: absolute;
+	right: 0;
+	border: 2px solid white;
+}
+
+.online { background-color: #28a745;
+	box-shadow: 2px 2px 4px #68de5bd6 inset;
+} /* 초록색 (온라인) */
+.offline { background-color: #6c757d;
+	box-shadow: 2px 2px 4px #3f3f3f inset;
+} /* 회색 (오프라인) */
