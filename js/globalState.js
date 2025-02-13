@@ -1,8 +1,8 @@
+export let globalState = {
 
-var globalState = {
-	intraID: null,
 };
 
+// Cookie parse after setting
 export async function SetTestState() {
 	globalState.intraID = janhan;
 }

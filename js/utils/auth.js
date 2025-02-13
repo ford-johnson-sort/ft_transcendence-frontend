@@ -1,17 +1,13 @@
-import { LOGIN_COOKIE } from '../constants/constants.js';
+import {LOGIN_COOKIE} from '../constants/constants.js';
 
 export default function isLogin() {
-	let userData = parseJWT();
-
-	console.log(userData);
 	if(getCookie(LOGIN_COOKIE)){
 		return true;
 	}
 	return false;
 }
 
-
-function getCookie(name) {
+export function getCookie(name) {
 	let cookie = document.cookie.split('; ')
 		.map((c) => {return c.split('=')})
 		.filter((c) => {return c[0] == name});
@@ -20,6 +16,7 @@ function getCookie(name) {
 
 function parseJWT() {
 	let jwt = getCookie(LOGIN_COOKIE);
+	JSON.parse(atob(getCookie(LOGIN_COOKIE)))
 	console.log("after GetCookie");
 	if (!jwt) {
 		console.log("JWT NULL");

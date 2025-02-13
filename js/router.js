@@ -15,7 +15,7 @@ export class Router {
 		window.addEventListener('popstate', this.route); // 뒤로 가기, 앞으로 가기 처리
 		window.addEventListener('DOMContentLoaded', this.route); // 새로고침 또는 처음 페이지 로드 시 실행
 	}
-	route() {
+	async route() {
 		let path = window.location.pathname;
 		if (path === '/index.html') {
 			path = '/'; // index.htmldmf '/'로 변환
@@ -30,7 +30,7 @@ export class Router {
 		}
 		const root = document.getElementById('root');
 		root.innerHTML = '';
-		root.appendChild(view.render());
+		root.appendChild(await view.render());
 	}
 	/**
 	 *
@@ -38,6 +38,6 @@ export class Router {
 	 */
 	async navigateTo(url) {
 		history.pushState({}, '', url);
-		this.route();
+		await this.route();
 	}
 }

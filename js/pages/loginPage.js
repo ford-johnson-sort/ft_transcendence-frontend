@@ -26,7 +26,7 @@ export const loginPage = {
 			if (isLogin())
 				window.navigateTo('/main');
 			else
-				window.navigateTo('/');
+				window.navigateTo('/auth/oauth/');
 			});
 		}
 		return container;

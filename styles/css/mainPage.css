@@ -29,11 +29,14 @@ body {
 	margin-left: auto;
 }
 
-.user-card {
+.user-card .user-card-upper {
 	display: flex;
 	gap: 15px;
 	flex-direction: row;
 	align-items: center;
+}
+
+.user-card{
 	padding: 1rem;
 	border-radius: 0.25rem;
 	box-shadow: 0px 4px 0px rgba(0, 0, 0, 0.4);
