@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <title>Chat Room</title>
+</head>
+
+<body>
+  <h1 id="auth">Chat!!</h1>
+  <div id="connect" style="visibility: hidden;">
+    chat to:<br>
+    <input id="room-name-input" type="text" size="100"><br>
+    <input id="room-name-submit" type="button" value="Enter">
+  </div>
+  <div id="chat" style="visibility: hidden;">
+    <textarea id="chat-log" cols="100" rows="20"></textarea><br>
+    <input id="chat-message-input" type="text" size="100"><br>
+    <input id="chat-message-submit" type="button" value="Send">
+  </div>
+
+  <script>
+    const COOKIE_NAME = 'merge-insertion-sort'
+    function getCookie(name) {
+      let cookie = document.cookie.split('; ')
+        .map((c) => { return c.split('=') })
+        .filter((c) => { return c[0] == name });
+      return cookie.length == 1 ? cookie[0][1] : null;
+    }
+
+    if (getCookie(COOKIE_NAME) == null) {
+      document.getElementById('auth').innerHTML = '<a href="/auth/oauth/"> auth!! </a>';
+    } else {
+      const userName = JSON.parse(atob(getCookie(COOKIE_NAME)))['username'];
+      document.getElementById('auth').innerText = `hello, ${userName}`;
+      document.getElementById('connect').style.visibility = 'visible';
+      document.querySelector('#room-name-input').focus();
+      document.querySelector('#room-name-input').onkeyup = function (e) {
+        if (e.key === 'Enter') {  // enter, return
+          document.querySelector('#room-name-submit').click();
+        }
+      };
+
+      document.querySelector('#room-name-submit').onclick = function (e) {
+        var roomName = document.querySelector('#room-name-input').value;
+        resolveChannel(roomName);
+      };
+    }
+
+    function resolveChannel(roomName) {
+      const userName = JSON.parse(atob(getCookie(COOKIE_NAME)))['username'];
+      const formData = new FormData();
+      formData.append("user1", userName);
+      formData.append("user2", roomName);
+      (async () => {
+        try {
+          const response = await fetch(`https://${window.location.host}/chat/new/`, {
+            method: 'POST',
+            credentials: 'same-origin',
+            body: formData
+          });
+
+          const data = await response.json();
+
+          connectChannel(userName, data);
+        } catch (error) {
+          console.error("Error during fetch:", error);
+        }
+      })();
+
+    }
+
+    function connectChannel(userName, uuid) {
+      console.log(uuid);
+      const chatSocket = new WebSocket(
+        `wss://${window.location.host}/chat/ws/${uuid['room_uuid']}/${userName}`
+      );
+      document.getElementById('connect').style.visibility = 'hidden';
+      document.getElementById('chat').style.visibility = 'visible';
+
+      chatSocket.onmessage = function (e) {
+        const data = JSON.parse(e.data);
+        document.querySelector('#chat-log').value += (data.message + '\n');
+      };
+
+      chatSocket.onclose = function (e) {
+        console.error('Chat socket closed unexpectedly');
+      };
+
+      document.querySelector('#chat-message-input').focus();
+      document.querySelector('#chat-message-input').onkeyup = function (e) {
+        if (e.key === 'Enter') {  // enter, return
+          document.querySelector('#chat-message-submit').click();
+        }
+      };
+
+      document.querySelector('#chat-message-submit').onclick = function (e) {
+        const messageInputDom = document.querySelector('#chat-message-input');
+        const message = messageInputDom.value;
+        chatSocket.send(JSON.stringify({
+          'message': message
+        }));
+        messageInputDom.value = '';
+      };
+    }
+  </script>
+</body>
+
+</html>
