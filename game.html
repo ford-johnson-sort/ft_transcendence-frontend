@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+	<style>
+		body { margin: 0; }
+		canvas { display: block; }
+	</style>
+</head>
+<body>
+  <div id="connect" style="visibility: hidden;">
+    game with:<br>
+    <input id="room-name-input" type="text" size="100"><br>
+    <input id="room-name-submit" type="button" value="Enter">
+  </div>
+  <div id="auth" style="visibility: hidden;">
+    <h1><a href="/auth/oauth/">login (42 Oauth)</a></h1>
+  </div>
+	<script type="module" src="js/game/login.js"></script>
+	<script type="module" src="js/game/room.js"></script> <!-- room.js > game.js -->
+</body>
+</html>
