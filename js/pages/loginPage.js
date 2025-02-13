@@ -1,3 +1,5 @@
+import isLogin from '../utils/auth.js';
+
 export const loginPage = {
 	render() {
 		const container = document.createElement('div', {id: "loginpage--container"});
@@ -21,12 +23,10 @@ export const loginPage = {
 			// Auth 인증 신청 GetToken();
 			loginButton.addEventListener('click', () => {
 				console.log('Login 버튼 클릭: /main 으로 이동')
-			// if (Token valid)
+			if (isLogin())
 				window.navigateTo('/main');
-			/*
-			else (Token == null)
-				LoginPage or alert 발생?
-			*/
+			else
+				window.navigateTo('/');
 			});
 		}
 		return container;
