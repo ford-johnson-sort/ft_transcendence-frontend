@@ -1,6 +1,7 @@
 import { loginPage } from './pages/loginPage.js';
 import { mainPage } from './pages/mainPage.js';
 import { notFoundPage } from './pages/notFoundPage.js';
+import { pongPage } from './pages/pongPage.js';
 import { loadPageCss } from './utils/loadPageCss.js';
 
 export class Router {
@@ -8,7 +9,8 @@ export class Router {
 		this.routes = [
 			{ path: '/', view: loginPage},
 			{ path: '/login', view: loginPage },
-			{ path: '/main', view: mainPage}
+			{ path: '/main', view: mainPage},
+			{ path: '/pong', view: pongPage}
 		];
 		this.route = this.route.bind(this);
 

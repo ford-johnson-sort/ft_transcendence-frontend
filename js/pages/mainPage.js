@@ -4,11 +4,12 @@ import { UserApi } from '../utils/apis.js';
 
 export const mainPage = {
 	async render() {
-		const container = document.createElement('div', {id: "page--main"});
-
+		const container = document.createElement('div');
+		container.setAttribute('id', 'main--div');
 
 		const currentUser = {
-			name: JSON.parse(atob(getCookie(LOGIN_COOKIE))).username,
+			// name: JSON.parse(atob(getCookie(LOGIN_COOKIE))).username,
+			name: 'janhan',
 			img: "https://placehold.co/60x60",
 			active: true,
 		};
@@ -16,17 +17,22 @@ export const mainPage = {
 		userList.render();
 		container.innerHTML = `
 		<div id="topNavBar">
-		<div id="currentUserInfo">
-		<div class="position-relative">
-		<span class="status-indicator ${currentUser.active ? "online" : "offline" }"></span> <!-- 오프라인 상태 -->
-		<img src="${currentUser.img}" alt="User Profile" class="profile-img">
+			<div id="currentUserInfo">
+				<div class="position-relative">
+					<span class="status-indicator ${currentUser.active ? "online" : "offline" }"></span> <!-- 오프라인 상태 -->
+					<img src="${currentUser.img}" alt="User Profile" class="profile-img">
+				</div>
+				<div class="currentUserName">
+					<p class="mb-0">${currentUser.name}</p>
+				</div>
+			</div>
 		</div>
-		<div class="currentUserName">
-		<p class="mb-0">${currentUser.name}</p>
-		</div>
-		</div>
-		</div>
+		<div id="SEX">
+			<div id="matchButtonContainer">
+				<button class="btn btn-success" id="matchButton">매칭</button>
+			</div>
 			<div id="userInfoList">
+			</div>
 		</div>
 		`;
 
@@ -39,10 +45,7 @@ export const mainPage = {
 				const userCard = event.target.closest(".user-card");
 				console.log(userCard);
 				const userName = event.target.dataset.username;
-
-				// 기존 채팅 섹션이 있으면 삭제 (토글)
 				const existingChat = document.querySelector("#onChat");
-				// 채팅방이 열려있을때 열었던 id가 아니면 그 아이디 카드 밑에 생성하고시ㅠ으
 				if (existingChat) {
 					existingChat.remove();
 				}
@@ -57,9 +60,13 @@ export const mainPage = {
 						<input type="text" class="chat-input" placeholder="Type a message...">
 					</div>
 				`;
-
 				userCard.appendChild(chatSection);
 			}
+		});
+		container.querySelector("#matchButton").addEventListener("click", () => {
+			alert("매칭을 시작합니다!");
+			// TODO: 매칭 API 호출 추가하기
+			window.navigateTo('/pong')
 		});
 		return container;
 	},
