@@ -26,7 +26,8 @@ export const loginPage = {
 			if (isLogin())
 				window.navigateTo('/main');
 			else
-				window.navigateTo('/auth/oauth/');
+				// window.navigateTo('/auth/oauth/');
+                document.location.href = "/auth/oauth/";
 			});
 		}
 		return container;
