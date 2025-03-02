@@ -1,5 +1,5 @@
-import Component from "../../common/Component.js";
-import CSSLaoder from '../../common/CSSLoader.js';
+import Component from "../common/Component.js";
+import CSSLaoder from '../common/CSSLoader.js';
 import { MATH_FUNNEL_COMPONENT, MatchFunnel } from "../ui/MatchFunnel.js";
 
 export default class MainPage extends Component {

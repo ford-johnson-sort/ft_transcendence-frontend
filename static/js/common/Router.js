@@ -4,7 +4,7 @@ import Renderer from "./Renderer.js";
 /**
  * @template T
  * @typedef {function(Object):Promise<T>} Loader
- * 
+ *
  * @template T
  * @typedef {{
  *  path: string,
@@ -33,10 +33,10 @@ export class Router extends Component {
     try {
       // popstate 이벤트 리스너 설정 (브라우저 뒤로가기/앞으로가기)
       window.addEventListener('popstate', this.handlePopState.bind(this));
-      
+
       // 링크 클릭 이벤트를 전역으로 처리
       document.addEventListener('click', this.handleLinkClick.bind(this));
-      
+
       // 초기 라우트 처리 (routes가 설정된 후 호출되어야 함)
       if (this.$state.routes && this.$state.routes.length > 0) {
         this.handleRouteChange(window.location.pathname);
@@ -69,18 +69,18 @@ export class Router extends Component {
         console.error("Invalid route configuration:", { path, component });
         return;
       }
-      
+
       const newRoutes = [...(this.$state.routes || [])];
       newRoutes.push({
         path,
         component,
         loader: options.loader
       });
-    
+
       this.setState({
         routes: newRoutes
       });
-  
+
       // 현재 경로와 추가된 라우트가 일치하면 즉시 업데이트
       if (this.matchRoute(window.location.pathname, path)) {
         this.handleRouteChange(window.location.pathname);
@@ -127,20 +127,20 @@ export class Router extends Component {
     try {
       // 이미 같은 경로라면 불필요한 업데이트 방지
       if (path === this.$state.currentPath && this.$state.activeComponent) return;
-      
+
       // 로딩 상태 시작
-      this.setState({ 
+      this.setState({
         currentPath: path,
         isLoading: true,
         data: null,
         error: null
       });
-  
+
       // 데이터 로딩
       await this.loadRouteData(path);
     } catch (error) {
       console.error("Error in handleRouteChange:", error);
-      this.setState({ 
+      this.setState({
         isLoading: false,
         error: error
       });
@@ -155,10 +155,10 @@ export class Router extends Component {
     try {
       // 현재 페이지와 동일한 경로면 무시
       if (path === window.location.pathname) return;
-      
+
       // 히스토리에 새 상태 추가
       window.history.pushState(null, '', path);
-      
+
       // 라우트 변경 처리
       this.handleRouteChange(path);
     } catch (error) {
@@ -174,7 +174,7 @@ export class Router extends Component {
     try {
       const routes = this.$state.routes || [];
       const currentRoute = this.findMatchingRoute(path, routes);
-  
+
       if (!currentRoute) {
         // 404 상태 설정
         this.setState({
@@ -184,7 +184,7 @@ export class Router extends Component {
         });
         return;
       }
-  
+
       // 로더가 없으면 데이터 로딩 없이 완료
       if (!currentRoute.loader) {
         this.setState({
@@ -194,12 +194,12 @@ export class Router extends Component {
         });
         return;
       }
-  
+
       try {
         // 경로 파라미터 추출 및 로더에 전달
         const params = this.extractParams(currentRoute.path, path);
         const data = await currentRoute.loader(params);
-        
+
         // 상태 업데이트로 자동 리렌더링 유도
         this.setState({
           isLoading: false,
@@ -234,26 +234,26 @@ export class Router extends Component {
     try {
       // 경로가 undefined인 경우 방어
       if (!currentPath || !routePath) return false;
-      
+
       // 와일드카드 라우트 처리
       if (routePath === '*') {
         return true;
       }
-      
+
       // 정확한 경로 일치
       if (routePath === currentPath) {
         return true;
       }
-      
+
       // 동적 파라미터 경로 처리 (예: '/product/:id')
       if (routePath.includes(':')) {
         const routeParts = routePath.split('/').filter(Boolean);
         const pathParts = currentPath.split('/').filter(Boolean);
-        
+
         if (routeParts.length !== pathParts.length) {
           return false;
         }
-        
+
         return routeParts.every((part, i) => {
           if (part.startsWith(':')) {
             return true; // 파라미터 부분은 어떤 값이든 허용
@@ -261,7 +261,7 @@ export class Router extends Component {
           return part === pathParts[i];
         });
       }
-      
+
       return false;
     } catch (error) {
       console.error("Error in matchRoute:", error);
@@ -278,20 +278,20 @@ export class Router extends Component {
       if (!routes || !Array.isArray(routes) || routes.length === 0) {
         return null;
       }
-      
+
       // 정확히 일치하는 라우트 찾기
       let route = routes.find(r => r.path === path);
-      
+
       // 동적 라우트 매칭
       if (!route) {
         route = routes.find(r => this.matchRoute(path, r.path));
       }
-      
+
       // 와일드카드 라우트 찾기
       if (!route) {
         route = routes.find(r => r.path === '*');
       }
-      
+
       return route;
     } catch (error) {
       console.error("Error in findMatchingRoute:", error);
@@ -308,28 +308,28 @@ export class Router extends Component {
   extractParams(routePath, currentPath) {
     try {
       const params = {};
-      
+
       // 둘 중 하나라도 undefined면 빈 객체 반환
       if (!routePath || !currentPath) return params;
-      
+
       if (!routePath.includes(':')) {
         return params;
       }
-      
+
       const routeParts = routePath.split('/').filter(Boolean);
       const pathParts = currentPath.split('/').filter(Boolean);
-      
+
       if (routeParts.length !== pathParts.length) {
         return params;
       }
-      
+
       routeParts.forEach((part, i) => {
         if (part.startsWith(':')) {
           const paramName = part.substring(1);
           params[paramName] = pathParts[i];
         }
       });
-      
+
       return params;
     } catch (error) {
       console.error("Error in extractParams:", error);
@@ -345,24 +345,24 @@ export class Router extends Component {
       // 안전하게 이전 상태 접근
       const safePrevState = prevState || {};
       const safeState = this.$state || {};
-      
+
       // 상태 변경 여부 확인
       const pathChanged = safePrevState.currentPath !== safeState.currentPath;
       const routesChanged = safePrevState.routes !== safeState.routes;
       const loadingChanged = safePrevState.isLoading !== safeState.isLoading;
       const dataChanged = safePrevState.data !== safeState.data;
       const errorChanged = safePrevState.error !== safeState.error;
-      
+
       // 무한 루프 방지를 위한 추가 검사
       const activeComponentChanged = safePrevState.activeComponent !== safeState.activeComponent;
-      
+
       // 활성 컴포넌트 이미 존재하고, 상태 변경이 activeComponent만 해당되는 경우 스킵
-      if (safeState.activeComponent && activeComponentChanged && 
+      if (safeState.activeComponent && activeComponentChanged &&
           !pathChanged && !routesChanged && !loadingChanged && !dataChanged && !errorChanged) {
         console.log("Skipping redundant active component update");
         return;
       }
-      
+
       // 관련 상태가 변경된 경우에만 컴포넌트 업데이트
       if (pathChanged || routesChanged || loadingChanged || dataChanged || errorChanged) {
         console.log("Router state changed, updating active component");
@@ -387,9 +387,9 @@ export class Router extends Component {
         console.warn("Preventing recursive updateActiveComponent call");
         return;
       }
-      
+
       this._updatingActiveComponent = true;
-      
+
       // 안전하게 상태 접근
       const safeState = this.$state || {};
       const currentPath = safeState.currentPath || '/';
@@ -397,9 +397,9 @@ export class Router extends Component {
       const isLoading = safeState.isLoading || false;
       const data = safeState.data;
       const error = safeState.error;
-      
+
       console.log(`Updating active component for path: ${currentPath}`);
-      
+
       // 기존 활성 컴포넌트가 있다면 언마운트
       if (safeState.activeComponent) {
         try {
@@ -408,18 +408,18 @@ export class Router extends Component {
           console.error("Error unregistering previous component:", e);
         }
       }
-  
+
       const currentRoute = this.findMatchingRoute(currentPath, routes);
-  
+
       if (currentRoute && currentRoute.component) {
         try {
           // 경로 파라미터 추출
           const params = this.extractParams(currentRoute.path, currentPath);
-          
+
           // 기존 활성 컴포넌트와 동일한 컴포넌트 타입이면 별도 처리
           const componentClassName = currentRoute.component.name;
           console.log(`Creating new component: ${componentClassName}`);
-  
+
           // 새 컴포넌트 마운트
           const component = new currentRoute.component(this.$target, {
             router: this,
@@ -428,7 +428,7 @@ export class Router extends Component {
             error,
             params // 경로 파라미터 전달
           });
-          
+
           // 직접 상태 수정하여 setState 호출을 줄임 (무한 루프 방지)
           this.$state = {
             ...this.$state,
@@ -443,7 +443,7 @@ export class Router extends Component {
         // 매칭되는 라우트가 없을 경우 404 처리
         this.$target.innerHTML = '<div class="not-found">페이지를 찾을 수 없습니다</div>';
       }
-      
+
       this._updatingActiveComponent = false;
     } catch (error) {
       console.error("Error in updateActiveComponent:", error);
@@ -456,11 +456,11 @@ export class Router extends Component {
   /**
    * 빈 템플릿 반환 - 실제 내용은 활성 컴포넌트가 렌더링
    */
-  template() { 
+  template() {
     return `
       <!-- Router Container -->
       <div class="router-view"></div>
-    `; 
+    `;
   }
 
   /**
@@ -471,7 +471,7 @@ export class Router extends Component {
     try {
       // 현재 활성화된 라우터 인스턴스 찾기
       const routerInstance = document.querySelector('[data-router]')?.__router;
-      
+
       if (routerInstance) {
         routerInstance.navigate(path);
       } else {

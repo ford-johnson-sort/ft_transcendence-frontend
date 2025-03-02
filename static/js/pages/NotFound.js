@@ -1,4 +1,4 @@
-import Component from "../../common/Component.js";
+import Component from "../common/Component.js";
 
 export default class NotFoundPage extends Component {
   template() {
@@ -10,7 +10,7 @@ export default class NotFoundPage extends Component {
       </div>
     `;
   }
-  
+
   setEvent() {
     // 홈으로 돌아가기 버튼
     const goBackButton = this.$target.querySelector('#goBackButton');

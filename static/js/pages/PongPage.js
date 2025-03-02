@@ -1,6 +1,6 @@
-import Component from "../../common/Component.js";
-import { PongGame } from "../../pages/game/PongGame.js";
-import { KeyboardController } from "../../pages/game/controller/KeyboardController.js";
+import Component from "../common/Component.js";
+import { PongGame } from "../pages/game/PongGame.js";
+import { KeyboardController } from "../pages/game/controller/KeyboardController.js";
 
 export default class PongPage extends Component {
   setup() {

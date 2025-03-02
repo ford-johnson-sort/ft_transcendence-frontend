@@ -1,4 +1,4 @@
-import { Router } from '../common/Router.js'
+import { Router } from './common/Router.js'
 // import LoginPage from './pages/LoginPage.js';
 import NotFoundPage from './pages/NotFound.js';
 import MainPage from './pages/MainPage.js';
