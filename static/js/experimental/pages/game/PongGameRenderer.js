@@ -3,7 +3,7 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
 import { FontLoader } from "three/addons/loaders/FontLoader.js";
 import { TextGeometry } from "three/addons/geometries/TextGeometry.js";
-import { Preload } from "../../utils/preload.js"
+import { Preload } from "../../../utils/preload.js"
 import { PongGameLogic } from './PongGameLogic.js';
 
 export class PongGameRenderer {
