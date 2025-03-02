@@ -11,7 +11,7 @@ export default class HomePage extends Component {
       <div id='loginpage--container'>
         <h1 id="LoginHeader">ft_transcendence</h1>
         <div id="LoginPageDiv">
-          <a class="btn btn-dark btn-lg" id="LoginButton" href='/'>LOGIN</a>
+          <a class="btn btn-dark btn-lg" id="LoginButton" href='/auth/oauth/'>LOGIN</a>
           <footer id="LoginFooter">Transcendence</footer>
         </div>
       </div>
