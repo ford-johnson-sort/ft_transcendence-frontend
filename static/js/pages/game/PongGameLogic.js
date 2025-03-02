@@ -1,3 +1,4 @@
+import PongManager from './PongManager.js'
 /**
 	WAIT = 대기중 접속 후 무조건 뜨는 상태
 	READY?
@@ -14,7 +15,7 @@
 export class PongGameLogic {
 	constructor(controller1, controller2, mode ) {
 		this.fieldWidth = 120;
-		this.fieldDepth = 160;
+		this.fieldDepth = 170;
 		this.paddleWidth = 18;
 		this.speedZ = 1.8;
 		//
@@ -41,7 +42,7 @@ export class PongGameLogic {
 		//
 		this.update = this.#update.bind(this);
 		this.loop = this.loop.bind(this);
-		this.targetScore = 5;
+		this.targetScore = 1;
 		// 도달하면
 		this.pauseDuration = 1500;
 		this.startTime = null;
@@ -114,7 +115,8 @@ export class PongGameLogic {
 			}
 		}
 		if (this.player1.score == this.targetScore || this.player2.score == this.targetScore) {
-			this.isEnd == true;
+			this.isEnd = true;
+
 			if (this.player1.score == this.targetScore) {
 				this.winner = "1";
 			} else {
@@ -123,7 +125,7 @@ export class PongGameLogic {
 			if (this.isHost && this.socket.readyState === WebSocket.OPEN) {
 				this.#send();
 			}
-			return PongManager.notify({winner: this.winner});
+			return PongManager.notify({type: 'GAME_END', data:{winner: this.winner}});
 		}
 		this.endTime = performance.now();
 		let gapTime = this.startTime - this.endTime;

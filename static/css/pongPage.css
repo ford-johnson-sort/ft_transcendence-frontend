@@ -1,0 +1,18 @@
+/* div[data-component='waitWrapper'] {
+	background-color:#00000080;
+	width: 100vw;
+	height: 100vh;
+	color: white;
+	position: absolute;
+	font-size: 2rem;
+	z-index: -1;
+	align-items: center;
+	justify-content: center;
+	display: flex;
+	flex-direction: column;
+}
+
+div[data-component='waitWrapper'][class]{
+	z-index: 1000;
+} */
+

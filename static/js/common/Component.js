@@ -145,10 +145,10 @@ export default class Component {
 
       // 상태 변화가 없으면 불필요한 업데이트 방지
       const hasChanged = Object.keys(newState).some(key => this.$state[key] !== newState[key]);
-      if (!hasChanged) {
-        console.log(`Skipping setState - no change detected in ${this.constructor.name}`);
-        return;
-      }
+      // if (!hasChanged) {
+      //   console.log(`Skipping setState - no change detected in ${this.constructor.name}`);
+      //   return;
+      // }
 
       Renderer.updateState(this, nextState, prevState);
     } catch (error) {

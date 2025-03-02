@@ -32,7 +32,7 @@ function initializeApp() {
   // router.addRoute('/pong/:matchType', PongPageRenew);
   // mathcType == local / remote / tournerment
   router.addRoute('/pong/:matchType', PongPage);
-  router.addRoute('/pong', PongPageRenew);
+  // router.addRoute('/pong', PongPageRenew);
 
   router.addRoute('*', NotFoundPage);
 

@@ -8,6 +8,7 @@ export class Preload {
 	static camera;
 	static renderer;
 	static pmremGenerator;
+	static RGBELoader;
 
 	static createCamera(
 		fov = 90,
@@ -45,7 +46,7 @@ export class Preload {
 		pmremGenerator.compileEquirectangularShader();
 		Preload.pmremGenerator = pmremGenerator;
 		return pmremGenerator;
-	}
+	};
 }
 
 
@@ -57,4 +58,6 @@ export class Preload {
 		Preload.createRenderer();
 	if (!Preload.pmremGenerator)
 		Preload.createPmremGenerator();
+	if (!Preload.RGBELoader)
+		Preload.RGBELoader = new RGBELoader();
 }) ();

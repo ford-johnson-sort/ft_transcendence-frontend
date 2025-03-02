@@ -20,9 +20,9 @@ export class PongGameRenderer {
 	async init(divID, pongGameLogic, player1Skin, player2Skin) {
 		this.pongGameLogicInstance = pongGameLogic;
 		this.gltfLoader = new GLTFLoader();
-		this.rgbeLoader = new RGBELoader();
 		this.scene = new THREE.Scene();
 		this.preLoader = Preload;
+		this.rgbeLoader = Preload.RGBELoader;
 
 		// 카메라 세팅
 		this.camera = Preload.camera;
@@ -41,29 +41,16 @@ export class PongGameRenderer {
 		this.audioLoader = new THREE.AudioLoader();
 		this.audioListener = new THREE.AudioListener();
 		this.camera.add(this.audioListener);
-
+		// Font 로더
 		this.fontLoader = new FontLoader();
-
-		// 배경 맵
-		this.rgbeLoader.load("static/assets/hdri/Nebula3_t.hdr", (texture) => {
-		this.envMap = this.pmremGenerator.fromEquirectangular(texture).texture;
-		this.scene.background = this.envMap;
-		this.scene.environment = this.envMap;
-		this.environmentRotation = new THREE.Object3D();
-		this.backgroundRotation = new THREE.Object3D();
-		this.scene.backgroundRotation.set(3, 0, 0);
-		this.scene.environmentRotation.set(3, 0, 0);
-		texture.dispose();
-	})
-
 		this.bgmSound = new THREE.Audio(this.audioListener);
 		// audioLoader.load("static/assets/sound/Moonlight.mp3", (buffer) => {
-		this.audioLoader.load("static/assets/sound/Youre just a chill guy listening to chill music.mp3", (buffer) => {
+		this.audioLoader.load("/static/assets/sound/Youre just a chill guy listening to chill music.mp3", (buffer) => {
 		this.bgmSound.setBuffer(buffer);
 		this.bgmSound.setLoop(true);
 		this.bgmSound.setVolume(0);
 		// TODO: 개발시에 틀지 말것 끄기 귀찮음
-		// bgmSound.play();
+		// this.bgmSound.play();
 		function fadeInAudio(audio, duration) {
 			const initialVolume = 0.0;
 			const targetVolume = 0.3;
@@ -83,7 +70,7 @@ export class PongGameRenderer {
 	});
 
 	this.strikeSound = new THREE.Audio(this.audioListener);
-	this.audioLoader.load("static/assets/sound/Ping Pong Ball Hit.mp3", (buffer) => {
+	this.audioLoader.load("/static/assets/sound/Ping Pong Ball Hit.mp3", (buffer) => {
 		this.strikeSound.setBuffer(buffer);
 		this.strikeSound.setLoop(false);
 		this.strikeSound.setVolume(0.2);
@@ -91,6 +78,7 @@ export class PongGameRenderer {
 
 	// 조명 추가
 	this.ambientLight = new THREE.DirectionalLight(0xffffff, 2);
+
 	this.scene.add(this.ambientLight);
 
 	// 공
@@ -101,6 +89,9 @@ export class PongGameRenderer {
 		metalness: 1,
 	});
 	this.ball = new THREE.Mesh(ballGeometry, ballMaterial);
+	this.ballLight = new THREE.PointLight(0xff0000, 10000, 100);
+	this.ballLight.position.set(0, 0, 0);
+	this.ball.add(this.ballLight);
 	this.scene.add(this.ball);
 
 	await this.setPlayer1UnitDefault();
@@ -142,16 +133,21 @@ export class PongGameRenderer {
 	 */
 	async setWallModel() {
 		try {
-			const gltfLeft = await this.loadGltfModel("static/assets/glb/wall.glb");
-			const gltfRight = await this.loadGltfModel("static/assets/glb/wall.glb");
+			const gltfLeft = await this.loadGltfModel("/static/assets/glb/wall.glb");
+			const gltfRight = await this.loadGltfModel("/static/assets/glb/wall.glb");
+			const gltfFloor = await this.loadGltfModel("/static/assets/glb/wall.glb");
 			this.wallUnitLeft = gltfLeft.scene;
 			this.wallUnitLeft.position.set(61, 0, 0);
 			this.wallUnitLeft.scale.set(1, 4, 4);
 			this.wallUnitRight = gltfRight.scene;
 			this.wallUnitRight.position.set(-61, 0, 0);
 			this.wallUnitRight.scale.set(1, 4, 4);
+			this.wallUnitFloor = gltfFloor.scene;
+			this.wallUnitFloor.position.set(0, -20, 0);
+			this.wallUnitFloor.scale.set(120, 1, 160);
 			this.scene.add(this.wallUnitRight);
 			this.scene.add(this.wallUnitLeft);
+			this.scene.add(this.wallUnitFloor);
 		} catch (error) {
 			console.error("Error Loading Model: ", error);
 		}
@@ -162,7 +158,7 @@ export class PongGameRenderer {
 	async setPlayer1UnitDefault() {
 		console.log('I am called');
 		try {
-			const gltf = await this.loadGltfModel("static/assets/glb/sabre.glb");
+			const gltf = await this.loadGltfModel("/static/assets/glb/sabre.glb");
 			this.player1Unit = gltf.scene;
 			this.player1Unit.position.set(0, 0, 80);
 			this.player1Unit.rotation.set(Math.PI * -0.2, 0, 0);
@@ -178,7 +174,7 @@ export class PongGameRenderer {
 			});
 			this.player1UnitMixer = null;
 			const thrustLight = new THREE.PointLight(0xff0000, 10000, 100);
-			thrustLight.position.set(0, 6, -2); // 부모 객체의 로컬 좌표계 기준으로 위치 설정
+			thrustLight.position.set(0, -6, -2); // 부모 객체의 로컬 좌표계 기준으로 위치 설정
 			this.player1Unit.add(thrustLight);
 			this.scene.add(this.player1Unit);
 			this.fontLoader.load("https://threejs.org/examples/fonts/helvetiker_regular.typeface.json", (font) => {
@@ -208,10 +204,10 @@ export class PongGameRenderer {
 
 	async setPlayer2UnitDefault() {
 		try {
-			const gltf = await this.loadGltfModel("static/assets/glb/sabre.glb");
+			const gltf = await this.loadGltfModel("/static/assets/glb/sabre.glb");
 			this.player2Unit = gltf.scene;
 			this.player2Unit.position.set(0, 0, -80);
-			this.player2Unit.rotation.set(Math.PI * +0.2, Math.PI, 0);
+			this.player2Unit.rotation.set(Math.PI * 0.2, Math.PI, 0);
 			this.player2Unit.scale.set(6, 4, 4);
 			this.player2Unit.traverse(function (child) {
 				if (child.isMesh) {
@@ -223,8 +219,8 @@ export class PongGameRenderer {
 				}
 			});
 			this.player2UnitMixer = null;
-			const thrustLight = new THREE.PointLight(0xff0000, 10000, 100);
-			thrustLight.position.set(0, 6, -2); // 부모 객체의 로컬 좌표계 기준으로 위치 설정
+			const thrustLight = new THREE.PointLight(0xff0000, 10000, 50);
+			thrustLight.position.set(0, 6, 4); // 부모 객체의 로컬 좌표계 기준으로 위치 설정
 			this.player2Unit.add(thrustLight);
 			this.scene.add(this.player2Unit);
 		} catch (error) {
@@ -334,6 +330,7 @@ export class PongGameRenderer {
 		if (this.pongGameLogicInstance.isEnd == false) {
 			requestAnimationFrame(this.animate);
 		} else {
+			// this.dispose();
 			return ;
 		}
 		// this.animateEnvironments();
@@ -388,7 +385,7 @@ export class PongGameRenderer {
 
 	dispose() {
 		this.isDisposed = true;
-
+		debugger;
 		this.disposeScene();
 		this.removeEventListeners();
 		this.disposeAudio();
