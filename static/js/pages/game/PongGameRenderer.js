@@ -1,12 +1,15 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
+import { FontLoader } from "three/addons/loaders/FontLoader.js";
+import { TextGeometry } from "three/addons/geometries/TextGeometry.js";
+import { Preload } from "../../utils/preload.js"
 import { PongGameLogic } from './PongGameLogic.js';
+
 export class PongGameRenderer {
 	constructor() {
 
 	};
-
 	/**
 	 *
 	 * @param {*} divID 렌더시킬 DIV ID
@@ -15,51 +18,34 @@ export class PongGameRenderer {
 	 * @param {*} player2Skin Player Skin (default)
 	 */
 	async init(divID, pongGameLogic, player1Skin, player2Skin) {
-		console.log(pongGameLogic);
 		this.pongGameLogicInstance = pongGameLogic;
 		this.gltfLoader = new GLTFLoader();
 		this.rgbeLoader = new RGBELoader();
 		this.scene = new THREE.Scene();
-		this.camera = new THREE.PerspectiveCamera(
-			90, // 시야각
-			window.innerWidth / window.innerHeight, // 화면비율
-			0.1, // 최소 렌더링 거리
-			1000 // 최대 렌더링 거리
-		)
+		this.preLoader = Preload;
 
 		// 카메라 세팅
-		this.camera.position.set(0, 40, 100);
-		this.camera.lookAt(new THREE.Vector3(0, 0, 35));
+		this.camera = Preload.camera;
 		this.rotationCenter = new THREE.Object3D();
 		this.rotationCenter.add(this.camera);
 		this.scene.add(this.rotationCenter);
 
 		// 렌더러
-		this.renderer = new THREE.WebGLRenderer({
-			antialias: true,
-			alpha: false,
-			precision: "lowp",
-			powerPreference: "high-performance"
-		});
-		this.renderer.autoClear = false;
-		this.renderer.setSize(window.innerWidth, window.innerHeight);
-		this.renderer.setPixelRatio(window.devicePixelRatio);
-		this.renderer.outputColorSpace = THREE.SRGBColorSpace;
-		this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-		this.renderer.toneMappingExposure = 2.0;
+		this.renderer = Preload.renderer;
 		document.getElementById(divID).appendChild(this.renderer.domElement);
 
 		// 포스트 프로세싱
-		this.pmremGenerator = new THREE.PMREMGenerator(this.renderer);
-		this.pmremGenerator.compileEquirectangularShader();
+		this.pmremGenerator = Preload.pmremGenerator;
 
 		// 오디오 로더, 리스너
 		this.audioLoader = new THREE.AudioLoader();
 		this.audioListener = new THREE.AudioListener();
 		this.camera.add(this.audioListener);
 
+		this.fontLoader = new FontLoader();
+
 		// 배경 맵
-		this.rgbeLoader.load("./assets/hdri/Nebula3_t.hdr", (texture) => {
+		this.rgbeLoader.load("static/assets/hdri/Nebula3_t.hdr", (texture) => {
 		this.envMap = this.pmremGenerator.fromEquirectangular(texture).texture;
 		this.scene.background = this.envMap;
 		this.scene.environment = this.envMap;
@@ -71,8 +57,8 @@ export class PongGameRenderer {
 	})
 
 		this.bgmSound = new THREE.Audio(this.audioListener);
-		// audioLoader.load("./assets/sound/Moonlight.mp3", (buffer) => {
-		this.audioLoader.load("./assets/sound/Youre just a chill guy listening to chill music.mp3", (buffer) => {
+		// audioLoader.load("static/assets/sound/Moonlight.mp3", (buffer) => {
+		this.audioLoader.load("static/assets/sound/Youre just a chill guy listening to chill music.mp3", (buffer) => {
 		this.bgmSound.setBuffer(buffer);
 		this.bgmSound.setLoop(true);
 		this.bgmSound.setVolume(0);
@@ -97,7 +83,7 @@ export class PongGameRenderer {
 	});
 
 	this.strikeSound = new THREE.Audio(this.audioListener);
-	this.audioLoader.load("./assets/sound/Ping Pong Ball Hit.mp3", (buffer) => {
+	this.audioLoader.load("static/assets/sound/Ping Pong Ball Hit.mp3", (buffer) => {
 		this.strikeSound.setBuffer(buffer);
 		this.strikeSound.setLoop(false);
 		this.strikeSound.setVolume(0.2);
@@ -119,6 +105,7 @@ export class PongGameRenderer {
 
 	await this.setPlayer1UnitDefault();
 	await this.setPlayer2UnitDefault();
+	await this.setWallModel();
 
 	this.animate = this.animate.bind(this);
 	this.resizeListener = this.resizeListener.bind(this);
@@ -150,13 +137,32 @@ export class PongGameRenderer {
 		});
 	}
 
+	/*
+	 * Wall Model import
+	 */
+	async setWallModel() {
+		try {
+			const gltfLeft = await this.loadGltfModel("static/assets/glb/wall.glb");
+			const gltfRight = await this.loadGltfModel("static/assets/glb/wall.glb");
+			this.wallUnitLeft = gltfLeft.scene;
+			this.wallUnitLeft.position.set(61, 0, 0);
+			this.wallUnitLeft.scale.set(1, 4, 4);
+			this.wallUnitRight = gltfRight.scene;
+			this.wallUnitRight.position.set(-61, 0, 0);
+			this.wallUnitRight.scale.set(1, 4, 4);
+			this.scene.add(this.wallUnitRight);
+			this.scene.add(this.wallUnitLeft);
+		} catch (error) {
+			console.error("Error Loading Model: ", error);
+		}
+	}
 	/**
 	 * Player Model Default import
 	 */
 	async setPlayer1UnitDefault() {
 		console.log('I am called');
 		try {
-			const gltf = await this.loadGltfModel("./assets/glb/sabre.glb");
+			const gltf = await this.loadGltfModel("static/assets/glb/sabre.glb");
 			this.player1Unit = gltf.scene;
 			this.player1Unit.position.set(0, 0, 80);
 			this.player1Unit.rotation.set(Math.PI * -0.2, 0, 0);
@@ -175,6 +181,26 @@ export class PongGameRenderer {
 			thrustLight.position.set(0, 6, -2); // 부모 객체의 로컬 좌표계 기준으로 위치 설정
 			this.player1Unit.add(thrustLight);
 			this.scene.add(this.player1Unit);
+			this.fontLoader.load("https://threejs.org/examples/fonts/helvetiker_regular.typeface.json", (font) => {
+				this.textGeometry = new TextGeometry("Janhan", {
+					// 텍스트 뚫어야함
+					font: font,
+					size: 1,
+					height: 0.000000000001,
+					curveSegments: 12,
+					bevelEnabled: false,
+					bevelThickness: 0.03,
+					bevelSize: 0.01,
+					bevelSegments: 5,
+					bevelThickness: 0.1,
+					depth: 0.1
+				});
+				this.textMaterial = new THREE.MeshPhongMaterial({ color: 0xffd700, shininess: 100 })
+				this.textMesh = new THREE.Mesh(this.textGeometry, this.textMaterial);
+				this.textMesh.rotation.set(-Math.PI / 2, 0, 0)
+				this.textMesh.position.set(-2, 0, 3);
+				this.player1Unit.add(this.textMesh);
+			});
 		} catch (error) {
 			console.error("Error Loading Model: ", error);
 		}
@@ -182,7 +208,7 @@ export class PongGameRenderer {
 
 	async setPlayer2UnitDefault() {
 		try {
-			const gltf = await this.loadGltfModel("./assets/glb/sabre.glb");
+			const gltf = await this.loadGltfModel("static/assets/glb/sabre.glb");
 			this.player2Unit = gltf.scene;
 			this.player2Unit.position.set(0, 0, -80);
 			this.player2Unit.rotation.set(Math.PI * +0.2, Math.PI, 0);

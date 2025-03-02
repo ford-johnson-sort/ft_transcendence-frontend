@@ -4,22 +4,14 @@ import { KeyboardController } from "../../pages/game/controller/KeyboardControll
 
 export default class PongPage extends Component {
   setup() {
-    console.log('setup',this.$props.params);
-    const players = JSON.parse(localStorage.getItem('playerNames') || '[]');
-    console.log(players);
-    // localStorage.removeItem('playerNames');
-    // this.children = [{
 
-    // }]
   }
 
   template() {
     return `
-    <div data-component="waitWrapper"></div>
-    <div id='pong-game-container'>
-      <div style={position:absolute}>sex</div>
+      <div id='pong-game-container'>
         <div id="pongCanvas"></div>
-    </div>
+      </div>
     `;
   }
 
@@ -28,9 +20,12 @@ export default class PongPage extends Component {
   }
 
 
-  componentDidMount() {
-    console.log(this.$props.params);
+  initGame() {
 
+  }
+
+  componentDidMount() {
+    console.log(this.$props);
     setTimeout(()=>{
       this.startPongGame();
     }, 0);

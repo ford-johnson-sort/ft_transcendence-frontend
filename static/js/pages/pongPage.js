@@ -27,8 +27,8 @@ export const pongPage = {
 
 async function startPongGame() {
 	const pongGame = new PongGame();
-	const key1 = new KeyboardController(37, 39, 38, 40, 32);
-	const key2 = new KeyboardController(65, 68, 87, 83, 70);
+	const key1 = new KeyboardController(37, 39, 38, 40, 32); // Local
+	const key2 = new KeyboardController(65, 68, 87, 83, 70); // Local
 	await pongGame.init(key1, key2, "Default", "Default", "pong-game-container");
 	pongGame.start();
 }

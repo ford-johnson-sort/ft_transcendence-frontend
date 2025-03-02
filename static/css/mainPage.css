@@ -1,9 +1,15 @@
 @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
 
 body {
-	background-color: Rgba(43, 43, 43);
+	background-color: #1f1f1f;
 	font-family: 'VT323',monospace;
 	font-size: 1.5rem;
+}
+
+#main--div{
+	height: 100vh;
+	display: flex;
+	flex-direction: column;
 }
 
 #topNavBar {
@@ -22,29 +28,48 @@ body {
 	gap: 20px;
 }
 
-#SEX {
-	display: flex;
-}
-
 #matchButtonContainer {
 	display: flex;
-	width: 75%;
-	height: auto;
+	width: 100%;
+	height: 100%;
 	justify-content: center;
 	align-items: center;
 }
 
-#matchButton {
+.matchButton {
 	font-family: 'VT323', monospace;
-	font-size: 64px;
+	font-size: 2rem;
 	text-shadow: 4px, 4px, 0px rgba(255, 76, 76);
-
+	line-height: 1.5rem;
 	width: 200px;
 	height: 100px;
-	border-radius: 0px;
-	box-shadow: 5px 5px 0px white;
-	--bs-btn-bg: rgba(40, 40, 40);
-	--bs-btn-border-color: rgba(40, 40, 40);
+	border-radius: 10px;
+	box-shadow: 4px 4px 0px white;
+
+	/* --bs-btn-bg: ;  */
+	/* --bs-btn-border-color: #3764bc;
+	/* --bs-btn-hover-bg: #983cb210 */
+}
+
+.back-button {
+	text-shadow: 4px, 4px, 0px rgba(255, 76, 76);
+	box-shadow: 4px 4px 0px white;
+	border-radius: 10px;
+}
+
+.funnel-step {
+	display: flex;
+	flex-direction: column;
+	align-items: start;
+}
+
+.funnel-step .funnel-header{
+	color: white;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	width: 100%;
+	padding-bottom: .5rem;
 }
 
 #userInfoList {

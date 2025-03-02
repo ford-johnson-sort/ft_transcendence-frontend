@@ -27,9 +27,10 @@ export const mainPage = {
 				</div>
 			</div>
 		</div>
-		<div id="SEX">
+		<div id="buttonContainer"
 			<div id="matchButtonContainer">
 				<button class="btn btn-success" id="matchButton">매칭</button>
+				<button class="btn btn-success" id="localMatchButton">LOCAL PLAY</button>
 			</div>
 			<div id="userInfoList">
 			</div>
