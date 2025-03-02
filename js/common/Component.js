@@ -1,10 +1,11 @@
+import Renderer from "./Renderer.js";
 
 /**
  * Base Component
  * @template P - The props type
  * @template S - The state type 
  */
-export default class Comopnent {
+export default class Component {
   /** @type {Element} */
   $target;
   /** @type {P} */
@@ -28,51 +29,65 @@ export default class Comopnent {
    * @param {P} [props={}] - Component properties
    */
   constructor($target, $props = {}) {
+    if (!$target) {
+      throw new Error('Component target element is required');
+    }
+    
     this.$target = $target;
-    this.$props = $props;
+    this.$props = $props || {};
+    this.$state = {};
     this.$id = `component_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
 
-    // 초기화
-    this.setup();
-
-    Renderer.register(this);
+    try {
+      // 초기화
+      this.setup();
+      Renderer.register(this);
+    } catch (error) {
+      console.error(`Error initializing component ${this.constructor.name}:`, error);
+    }
   }
 
-  // TODO: constructor에서 초기셋팅을 하는게 좋을지 초기셋팅을 위한 메소드를 뚫어주는게 좋을지
   /**
    * Setup initial state
    * @virtual
    */
-  setup() {}
+  setup() {
+    // 자식 클래스에서 구현
+  }
 
   /**
    * Generate HTML template
    * @virtual
-   * @returns string
+   * @returns {string}
    */
   template() {
-    throw Error("template method must be overrride");
+    console.warn(`Component ${this.constructor.name} does not implement template method`);
+    return '<div>No template implemented</div>';
   }
 
   /**
    * Set event listeners
    * @returns {void}
    */
-  setEvent(){};
-
+  setEvent() {
+    // 자식 클래스에서 구현
+  }
 
   /**
    * 컴포넌트가 마운트되기 직전에 호출
    * @virtual
    */
-  componentWillMount(){}
-
+  componentWillMount() {
+    // 자식 클래스에서 구현
+  }
 
   /**
    * 컴포넌트 마운트 직후에 호출
    * @virtual 
    */
-  componentDidMount(){}
+  componentDidMount() {
+    // 자식 클래스에서 구현
+  }
   
   /**
    * 컴포넌트가 업데이트 되어야하는지 확인
@@ -81,51 +96,91 @@ export default class Comopnent {
    * @param {S} nextState
    * @return {boolean}
    */
-   shouldComponentUpdate(nextProps, nextState){
+  shouldComponentUpdate(nextProps = {}, nextState = {}) {
+    // 기본적으로 항상 업데이트 허용
     return true;
-   }
+  }
 
   /**
    * 컴포넌트 업데이트 직전에 호출
+   * @param {P} prevProps - 이전 props
+   * @param {S} prevState - 이전 state
    * @virtual
    */
-  componentWillUpdate(){}
-
+  componentWillUpdate(prevProps, prevState) {
+    // 자식 클래스에서 구현
+  }
 
   /**
    * 컴포넌트 업데이트 직후에 호출
+   * @param {P} prevProps - 이전 props
+   * @param {S} prevState - 이전 state
    * @virtual
    */
-  componentDidUpdate(){}
+  componentDidUpdate(prevProps, prevState) {
+    // 자식 클래스에서 구현
+  }
 
- 
   /**
    * 컴포넌트가 제거되기 전에 호출
    * @virtual
    */
-  componentDidUnmount() {}
+  componentWillUnmount() {
+    // 자식 클래스에서 구현
+  }
  
   /**
    * 상태 업데이트
-   * @param {Partial<S>} newState
+   * @param {Partial<S>} newState - 업데이트할 새로운 상태
    */
   setState(newState) {
-    const prevState = {...this.$state};
-    const nextState = {...this.$state, ...newState};
+    if (!newState || typeof newState !== 'object') {
+      console.warn('setState called with invalid newState', newState);
+      return;
+    }
 
-    Renderer.updateState(this, nextState, prevState);
+    try {
+      const prevState = {...this.$state};
+      const nextState = {...this.$state, ...newState};
+      
+      // 상태 변화가 없으면 불필요한 업데이트 방지
+      const hasChanged = Object.keys(newState).some(key => this.$state[key] !== newState[key]);
+      if (!hasChanged) {
+        console.log(`Skipping setState - no change detected in ${this.constructor.name}`);
+        return;
+      }
+      
+      Renderer.updateState(this, nextState, prevState);
+    } catch (error) {
+      console.error(`Error in setState for ${this.constructor.name}:`, error);
+    }
   }
 
   /**
    * 프롭스 업데이트
-   * @param {Partial<P>} newProps
+   * @param {Partial<P>} newProps - 업데이트할 새로운 props
    */
   setProps(newProps) {
-    const prevProps = {...this.$props};
-    const nextProps = { ...this.$props, ...newProps};
+    if (!newProps || typeof newProps !== 'object') {
+      console.warn('setProps called with invalid newProps', newProps);
+      return;
+    }
 
-    // 실제 업데이트 및 렌더링은 Renderer에 위임
-    Renderer.updateProps(this, nextProps, prevProps);
+    try {
+      const prevProps = {...this.$props};
+      const nextProps = {...this.$props, ...newProps};
+      
+      // props 변화가 없으면 불필요한 업데이트 방지
+      const hasChanged = Object.keys(newProps).some(key => this.$props[key] !== newProps[key]);
+      if (!hasChanged) {
+        console.log(`Skipping setProps - no change detected in ${this.constructor.name}`);
+        return;
+      }
+      
+      // 실제 업데이트 및 렌더링은 Renderer에 위임
+      Renderer.updateProps(this, nextProps, prevProps);
+    } catch (error) {
+      console.error(`Error in setProps for ${this.constructor.name}:`, error);
+    }
   }
-
 }
