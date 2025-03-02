@@ -3,7 +3,7 @@ import Renderer from "./Renderer.js";
 /**
  * Base Component
  * @template P - The props type
- * @template S - The state type 
+ * @template S - The state type
  */
 export default class Component {
   /** @type {Element} */
@@ -20,7 +20,7 @@ export default class Component {
 
   /** @type {Object.<string, Element>} */
   childrenContainers = {};
-  
+
   /** @type {string} */
   $id;
 
@@ -32,7 +32,7 @@ export default class Component {
     if (!$target) {
       throw new Error('Component target element is required');
     }
-    
+
     this.$target = $target;
     this.$props = $props || {};
     this.$state = {};
@@ -83,16 +83,16 @@ export default class Component {
 
   /**
    * 컴포넌트 마운트 직후에 호출
-   * @virtual 
+   * @virtual
    */
   componentDidMount() {
     // 자식 클래스에서 구현
   }
-  
+
   /**
    * 컴포넌트가 업데이트 되어야하는지 확인
    * @virtual
-   * @param {P} nextProps 
+   * @param {P} nextProps
    * @param {S} nextState
    * @return {boolean}
    */
@@ -128,7 +128,7 @@ export default class Component {
   componentWillUnmount() {
     // 자식 클래스에서 구현
   }
- 
+
   /**
    * 상태 업데이트
    * @param {Partial<S>} newState - 업데이트할 새로운 상태
@@ -142,14 +142,14 @@ export default class Component {
     try {
       const prevState = {...this.$state};
       const nextState = {...this.$state, ...newState};
-      
+
       // 상태 변화가 없으면 불필요한 업데이트 방지
       const hasChanged = Object.keys(newState).some(key => this.$state[key] !== newState[key]);
       if (!hasChanged) {
         console.log(`Skipping setState - no change detected in ${this.constructor.name}`);
         return;
       }
-      
+
       Renderer.updateState(this, nextState, prevState);
     } catch (error) {
       console.error(`Error in setState for ${this.constructor.name}:`, error);
@@ -169,14 +169,14 @@ export default class Component {
     try {
       const prevProps = {...this.$props};
       const nextProps = {...this.$props, ...newProps};
-      
+
       // props 변화가 없으면 불필요한 업데이트 방지
       const hasChanged = Object.keys(newProps).some(key => this.$props[key] !== newProps[key]);
       if (!hasChanged) {
         console.log(`Skipping setProps - no change detected in ${this.constructor.name}`);
         return;
       }
-      
+
       // 실제 업데이트 및 렌더링은 Renderer에 위임
       Renderer.updateProps(this, nextProps, prevProps);
     } catch (error) {
