@@ -12,13 +12,19 @@ export class KeyboardController extends Controller {
 		this.rightKeycode = rightKeycode;
 		this.keydownListener = this.keydownListener.bind(this);
 		this.keyupListener = this.keyupListener.bind(this);
-		this.lastKeyStroke = null;
+		this.lastKeyStroke = {
+			type: null,
+			keycode: null,
+		}
 		window.addEventListener('keydown', this.keydownListener);
 		window.addEventListener('keyup', this.keyupListener);
 	}
 
 	keydownListener(event) {
 		const keycode = event.keyCode;
+		const type = "KEYDOWN";
+		if (this.lastKeyStroke.type == type && this.lastKeyStroke.keycode === keycode)
+			return ;
 		switch (keycode) {
 			case this.leftKeycode:
 				this.left = true;
@@ -29,14 +35,16 @@ export class KeyboardController extends Controller {
 			default:
 				return ;
 		}
-		if (this.lastKeyStroke !== keycode){
-			this.lastKeyStroke = keycode;
-			this.updater("KEYDOWN", keycode);
-		}
+		this.lastKeyStroke = { type, keycode };
+		this.updater(type, keycode);
 	}
 
 	keyupListener(event) {
 		const keycode = event.keyCode;
+		const type = "KEYUP";
+		
+		if (this.lastKeyStroke.type == type && this.lastKeyStroke.keycode == keycode)
+			return ;
 		switch (keycode) {
 			case this.leftKeycode:
 				this.left = false;
@@ -47,10 +55,8 @@ export class KeyboardController extends Controller {
 			default:
 				return ;
 		}
-		if (this.lastKeyStroke !== keycode){
-			this.lastKeyStroke = keycode;
-			this.updater("KEYDOWN", keycode);
-		}
+		this.lastKeyStroke = { type, keycode }
+		this.updater(type, keycode);
 	}
 
 	setUpdater(fn) {

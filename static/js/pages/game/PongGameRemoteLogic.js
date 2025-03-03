@@ -66,8 +66,8 @@ export class PongGameRemoteLogic {
 			case GAME_MODE.END_GAME:
 				PongManager.notify({type, data});
 				this.isEnd = true;
+				this.player1.controller.setUpdater(()=>{}); // controller1의 updater를 빈 함수로 설정
 				this.socket.close();
-				this.controller1.setUpdater(()=>{}); // controller1의 updater를 빈 함수로 설정
 				break;
 			case GAME_MODE.READY:
 				this.player2.userName = data.opponent;
@@ -116,12 +116,12 @@ export class PongGameRemoteLogic {
 	}
 
 	ballUpdate({velocity, position}) {
-		console.log("beforeballUpdate", {...this.ball});
+		// console.log("beforeballUpdate", {...this.ball});
 		this.ball.velocity.x = velocity[0];
 		this.ball.velocity.z = velocity[1];
 		this.ball.position.x = position[0];
 		this.ball.position.z = position[1];
-		console.log("ballUpdate", {...this.ball});
+		// console.log("ballUpdate", {...this.ball});
 	}
 
 	/**
@@ -182,67 +182,28 @@ export class PongGameRemoteLogic {
 
 		// 서버에서 계산을 잘못하고있다 1번
 		// remote logic ball effect
-		// this.ball.position.x += this.ball.velocity.x * delta;
-		// this.ball.position.z += this.ball.velocity.z * delta;
+		this.ball.position.x += this.ball.velocity.x * delta;
+		this.ball.position.z += this.ball.velocity.z * delta;
 
 		// // 공이 벽에 충돌했을 경우
-		// if (this.ball.position.x >= this.fieldWidth / 2) {
-		// 	this.ball.position.x = this.fieldWidth / 2;
-		// 	this.ball.velocity.x *= -1;
-		// 	this.isWallStrike = true;
-		// } else if (this.ball.position.x <= -this.fieldWidth / 2) {
-		// 	this.ball.position.x = -this.fieldWidth / 2;
-		// 	this.ball.velocity.x *= -1;
-		// 	this.isWallStrike = true;
-		// }
+		if (this.ball.position.x >= this.fieldWidth / 2) {
+			this.willstrike = true;
+		} else if (this.ball.position.x <= -this.fieldWidth / 2) {
+			this.isWallStrike = true;
+		}
 		// // 공이 라인을 넘었을 경우 (공 반사 or 실점 판정)
-		// if (this.ball.position.z >= this.fieldDepth / 2) { // 라인을 넘었을 경우 : 1p
-		//   if (this.player1.position.x - (this.paddleWidth / 2) <= this.ball.position.x && // 공 반사
-		// 	this.ball.position.x <= this.player1.position.x + (this.paddleWidth / 2)) {
-		// 		this.ball.position.z = this.fieldDepth / 2;
-		// 		this.ball.velocity.z *= -1;
-		// 		this.ball.velocity.x = (this.ball.position.x - this.player1.position.x) / ((this.paddleWidth / 2) + 0.1) * this.speedZ;
-		// 		this.isPlayer1Strike = true;
-		// 	} else { // 실점 판정
-		// 		if (!this.isGuest) {
-		// 			this.player2.score++;
-		// 			if (this.player1.scoreQuery) {
-		// 				if (this.isGuest == false) {
-		// 					this.player2.scoreQuery.innerHTML = this.player2.score;
-		// 				}
-		// 			}
-		// 			this.ball.velocity.z = -this.speedZ;
-		// 			this.ball.velocity.x = 0;
-		// 			this.ball.position.x = 0;
-		// 			this.ball.position.z = 0;
-		// 			this.player1.position.x = 0;
-		// 			this.player2.position.x = 0;
-		// 			this.pauseDuration = 1500;
-		// 		}
-		// 	}
-		// } else if (this.ball.position.z <= -this.fieldDepth / 2) { // 라인을 넘었을 경우 : 2p
-		// 	if (this.player2.position.x - (this.paddleWidth / 2) <= this.ball.position.x && // 공 반사
-		// 		this.ball.position.x <= this.player2.position.x + (this.paddleWidth / 2)) {
-		// 		this.ball.position.z = -this.fieldDepth / 2;
-		// 		this.ball.velocity.z = -this.ball.velocity.z;
-		// 		this.ball.velocity.x = (this.ball.position.x - this.player2.position.x)
-		// 			/ ((this.paddleWidth / 2) + 0.1) * this.speedZ;
-		// 		this.isPlayer2Strike = true;
-		// 	} else { // 실점 판정
-		// 		this.player1.score++;
-		// 		this.ball.velocity = { x: 0, y : 0, z : 0 };
-		// 		this.ball.position = { x: 0, y : 0, z : 0 };
-		// 		this.player1.position.x = 0;
-		// 		this.player2.position.x = 0;
-		// 		this.pauseDuration = 1500;
-		// 	}
-		// }
-		// // 공 속도 점점 빠르게
-		// if (this.ball.velocity.z > 0) {
-		// 	this.ball.velocity.z += 0.001 * delta;
-		// } else if (this.ball.velocity.z < 0) {
-		// 	this.ball.velocity.z -= 0.001 * delta;
-		// }
+		if (this.ball.position.z >= this.fieldDepth / 2) { // 라인을 넘었을 경우 : 1p
+		  if (this.player1.position.x - (this.paddleWidth / 2) <= this.ball.position.x && // 공 반사
+			this.ball.position.x <= this.player1.position.x + (this.paddleWidth / 2)) {
+				this.isPlayer1Strike = true;
+			} 
+		} else if (this.ball.position.z <= -this.fieldDepth / 2) { // 라인을 넘었을 경우 : 2p
+			if (this.player2.position.x - (this.paddleWidth / 2) <= this.ball.position.x && // 공 반사
+				this.ball.position.x <= this.player2.position.x + (this.paddleWidth / 2)) {
+				this.isPlayer2Strike = true;
+			} 
+		}
+
 	}
 
 	async loop() {

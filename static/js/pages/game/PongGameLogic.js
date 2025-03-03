@@ -122,7 +122,6 @@ export class PongGameLogic {
 		클리언트에서 -> 서버로 주는거 KEY_PRESS OFF 값인데
 	*/
 	async #update(delta) {
-		console.log('update', this.ball);
 		// 컨트롤러값으로 기체 움직임 적용
 		let player1Moved = false;
 		if (this.player1.controller.left == true) {

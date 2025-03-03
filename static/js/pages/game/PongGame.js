@@ -47,9 +47,6 @@ export class PongGame {
 
 	destroy() {
 		if (this.logic !== null) {
-			if (globalState.gameMode == "remote") {
-				this.logic.socket.close();
-			}
 			this.logic.isEnd = true;
 		}
 		if (this.renderer !== null) {
