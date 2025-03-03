@@ -94,7 +94,7 @@ export class PongGameLogic {
 			this.pauseDuration = Math.max(this.pauseDuration - this.delta, 0);
 		} else {
 			this.#update(this.delta / (1000.0 / 60.0));
-		}
+		} 
 		if (this.player1.score == this.targetScore || this.player2.score == this.targetScore) {
 			this.isEnd = true;
 			if (this.player1.score == this.targetScore) {
@@ -102,6 +102,7 @@ export class PongGameLogic {
 			} else {
 				this.winner = this.player2.userName;
 			}
+
 			return PongManager.notify({type: 'GAME_END', data:{winner: this.winner}});
 		}
 		this.endTime = performance.now();
@@ -121,7 +122,7 @@ export class PongGameLogic {
 		클리언트에서 -> 서버로 주는거 KEY_PRESS OFF 값인데
 	*/
 	async #update(delta) {
-
+		console.log('update', this.ball);
 		// 컨트롤러값으로 기체 움직임 적용
 		let player1Moved = false;
 		if (this.player1.controller.left == true) {

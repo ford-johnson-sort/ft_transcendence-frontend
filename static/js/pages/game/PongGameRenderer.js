@@ -17,6 +17,7 @@ export class PongGameRenderer {
 	 * @param {*} player1Skin Player Skin (Defulat)
 	 * @param {*} player2Skin Player Skin (default)
 	 */
+
 	async init(divID, pongGameLogic) {
 		this.pongGameLogicInstance = pongGameLogic;
 		this.gltfLoader = new GLTFLoader();
@@ -176,7 +177,7 @@ export class PongGameRenderer {
 			thrustLight.position.set(0, -6, -2); // 부모 객체의 로컬 좌표계 기준으로 위치 설정
 			this.player1Unit.add(thrustLight);
 			this.scene.add(this.player1Unit);
-			if (!this.pongGameLogicInstance.player1.userName  || this.player2Unit == null) {
+			if (!this.pongGameLogicInstance.player1.userName  || this.player1Unit == null) {
 				return ;
 			}
 			this.playerNameTextureLoad(this.pongGameLogicInstance.player1.userName, 'player1', this.player1Unit);
@@ -206,7 +207,7 @@ export class PongGameRenderer {
 			thrustLight.position.set(0, 6, 4); // 부모 객체의 로컬 좌표계 기준으로 위치 설정
 			this.player2Unit.add(thrustLight);
 			this.scene.add(this.player2Unit);
-			if (this.pongGameLogicInstance.player2.userName == null || this.player1Unit == null) {
+			if (this.pongGameLogicInstance.player2.userName == null || this.player2Unit == null) {
 				return ;
 			}
 			this.playerNameTextureLoad(this.pongGameLogicInstance.player2.userName, 'player2', this.player2Unit);
@@ -233,8 +234,13 @@ export class PongGameRenderer {
 			textGeometry.center();
 			const textMaterial = new THREE.MeshPhongMaterial({ color: 0xffd700, shininess: 100 });
 			const textMesh = new THREE.Mesh(textGeometry, textMaterial);
-			textMesh.rotation.set(Math.PI / 2, Math.PI, 0);
-			textMesh.position.set(0, 0, 3);
+			if (id === 'player1') {
+				textMesh.rotation.set(-Math.PI / 2, 0, 0);
+				textMesh.position.set(0, 0, 2);
+			} else {
+				textMesh.rotation.set(Math.PI / 2, Math.PI, 0);
+				textMesh.position.set(0, 0, 2);
+			}
 			textMesh.name = id;
 			playerUnit.add(textMesh);
 		});
