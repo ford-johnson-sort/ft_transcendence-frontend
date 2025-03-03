@@ -289,7 +289,7 @@ export class PongGameRemoteLogic {
 		if (this.pauseDuration) {
 			this.pauseDuration = Math.max(this.pauseDuration - this.delta, 0);
 		} else {
-			this.#update(this.delta / (1000.0 / 60.0));
+			this.update(this.delta / (1000.0 / 60.0));
 		}
 		this.endTime = performance.now();
 		let gapTime = this.startTime - this.endTime;
