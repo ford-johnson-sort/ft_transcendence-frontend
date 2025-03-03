@@ -46,7 +46,8 @@ export class PongGameRemoteLogic {
 				socket.close();
 				break;
 			case "READY":
-				console.log('sexy food');
+				this.player2.username = data.opponent;
+				this.player1.username = data.username;
 				break;
 			case "WAIT":
 				PongManager.notify({type, data});

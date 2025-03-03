@@ -18,7 +18,10 @@ export default class RemotePlayPong extends Component {
     this.unSubscribe = PongManager.subscribe(this.subscribe);
   }
 
-  subscribe = (message) => {
+  subscribe({mode, data}){ // data -> {[key:string]:?}
+    if(mode === 'READY'){
+      this.startPong();
+    }
     console.log('listsen Remote', message);
   }
 
@@ -55,19 +58,23 @@ export default class RemotePlayPong extends Component {
     setTimeout(async ()=>{
       try{
         await this.prepare();
-        this.startPongGame();
+        this.preparePong();
       } catch(e){
 
       }
     }, 0);
   }
 
-  async startPongGame(){
-    const pongGame = new PongGame();
+  async preparePong(){
+    this.pongGame = new PongGame();
     const key1 = new KeyboardController(37, 39, 38, 40, 32);
     const key2 = new KeyboardController(65, 68, 87, 83, 70);
-    await pongGame.init(key1, key2, "pong-game-container", this.$state.matchType);
-    pongGame.start();
+    await this.pongGame.init(key1, key2, "pong-game-container", this.$state.matchType);
+    // pongGame.start();
+  }
+
+  startPong(){
+    this.pongGame.start();
   }
 
   componentWillUnmount(){
