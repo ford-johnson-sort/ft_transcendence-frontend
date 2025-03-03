@@ -3,10 +3,11 @@ import { Router } from './common/Router.js'
 import NotFoundPage from './pages/NotFound.js';
 import MainPage from './pages/MainPage.js';
 import PongPage from './pages/PongPage.js';
-import PongPageRenew from './pages/PongPageRenew.js';
 import HomePage from './pages/HomePage.js'
 import AuthCallback from './pages/AuthCallback.js'
 import RemotePlayPong from './pages/RemotePlayPage.js';
+import PongTounament from './pages/PongTournament.js';
+
 
 function initializeApp() {
   const appContainer = document.getElementById('root');
@@ -34,16 +35,15 @@ function initializeApp() {
   // router.addRoute('/pong/:matchType', PongPageRenew);
   // mathcType == local / remote / tournerment
   router.addRoute('/pong/remote', RemotePlayPong);
-  router.addRoute('/pong/:matchType', PongPage);
+  router.addRoute('/pong/1on1', PongPage);
+  router.addRoute('/pong/tournament', PongTounament);
   // router.addRoute('/pong', PongPageRenew);
 
   router.addRoute('*', NotFoundPage);
 
   // 초기 라우트 처리
   router.handleRouteChange(window.location.pathname);
-
 }
-
 
 // DOM이 로드된 후 앱 초기화
 document.addEventListener('DOMContentLoaded', initializeApp);

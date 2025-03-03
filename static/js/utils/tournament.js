@@ -1,7 +1,7 @@
 const SHUFFLE_TRIES = 8;
 
 export default class Tournament {
-  constructor(users){
+  constructor(users) {
     this.users = new Set(users);
     this.match = shuffle(users, SHUFFLE_TRIES)
       .map((i, idx, origin)=> {

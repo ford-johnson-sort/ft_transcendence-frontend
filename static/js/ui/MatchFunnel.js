@@ -94,12 +94,12 @@ export class MatchFunnel extends Component {
       return this.startGame({matchType});
     }
     if(matchType === MATCH_TYPE.ONE_ON_ONE){
-      return this.setState({matchType, matchUserAmount: 2, currentStep: currentStep+1});
+      return this.setState({matchType, matchUserAmount: 2, currentStep: currentStep + 1});
     }
     if(currentStep === 2 && matchType === MATCH_TYPE.TOURNAMENT){
-      this.setState({currentStep:currentStep+1, matchUserAmount: 4, matchType});
+      this.setState({currentStep: currentStep + 1, matchUserAmount: 4, matchType});
     }
-    return this.setState({currentStep: currentStep+1 });
+    return this.setState({currentStep: currentStep + 1});
   }
 
   handleFormSubmit = (e) =>{

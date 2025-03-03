@@ -1,40 +1,39 @@
-div[data-component='PongManager'] {
-	background-color:#00000080;
-	width: 100vw;
-	height: 100vh;
-	color: white;
-	position: absolute;
-	font-size: 2rem;
-	z-index: -1;
-	align-items: center;
-	justify-content: center;
-	display: flex;
-	flex-direction: column;
+div[data-component="PongManager"] {
+  background-color: #00000080;
+  width: 100vw;
+  height: 100vh;
+  color: white;
+  position: absolute;
+  font-size: 2rem;
+  z-index: -1;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
 }
 
-div[data-component='PongManager'][class]{
-	z-index: 1000;
+div[data-component="PongManager"][class] {
+  z-index: 1000;
 }
 
-div[data-component='PongManager'][class]::before {
-	content: "🔥 WINNER 🔥";
+div[data-component="PongManager"][class]::before {
+  content: "🔥 WINNER 🔥";
 }
 
-.audio.hidden{
-	display: none;
+.audio.hidden {
+  display: none;
 }
 
-div[data-component='PongManager'][class] .vibration{
-	animation: vibration 2s linear infinite;
+div[data-component="PongManager"][class] .vibration {
+  animation: vibration 2s linear infinite;
 }
-
 
 @keyframes vibration {
-	from {
-		transform: rotate(360deg);
-	}
+  from {
+    transform: rotate(360deg);
+  }
 
-	to {
-		transform: rotate(0deg);
-	}
+  to {
+    transform: rotate(0deg);
+  }
 }
