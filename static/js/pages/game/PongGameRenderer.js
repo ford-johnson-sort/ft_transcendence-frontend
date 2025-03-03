@@ -401,7 +401,6 @@ export class PongGameRenderer {
 
 	dispose() {
 		this.isDisposed = true;
-		debugger;
 		this.disposeScene();
 		this.removeEventListeners();
 		this.disposeAudio();

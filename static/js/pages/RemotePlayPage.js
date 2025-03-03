@@ -10,11 +10,7 @@ export default class RemotePlayPong extends Component {
   setup() {
     CSSLaoder.load('pongPage');
     const {matchType} = this.$props.params;
-    if (matchType !== GAME_MODE.REMOTE) {
-      // TODO : 전역 모달 열어서 메시지 안내 후,  redirect
-      return ;
-    }
-
+    this.$state = { matchType };
     this.unSubscribe = PongManager.subscribe(this.subscribe);
   }
 
@@ -61,7 +57,7 @@ export default class RemotePlayPong extends Component {
 
     setTimeout(async ()=>{
       try{
-        await this.prepare();
+        // await this.prepare();
         this.preparePong();
       } catch(e){
 
@@ -73,7 +69,8 @@ export default class RemotePlayPong extends Component {
     this.pongGame = new PongGame();
     const key1 = new KeyboardController(37, 39, 38, 40, 32);
     const key2 = new KeyboardController(65, 68, 87, 83, 70);
-    await this.pongGame.init(key1, key2, "pong-game-container", this.$state.matchType);
+    console.log(this.$state.matchType);
+    await this.pongGame.init(key1, key2, "pong-game-container", 'remote');
     this.startPong();
   }
 

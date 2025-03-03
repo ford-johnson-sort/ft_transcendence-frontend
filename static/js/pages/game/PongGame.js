@@ -1,6 +1,7 @@
 import { PongGameLogic } from "./PongGameLogic.js";
 import { PongGameRenderer } from "./PongGameRenderer.js";
 import { PongGameRemoteLogic } from "./PongGameRemoteLogic.js";
+import { GAME_MODE } from "../../constants/constants.js";
 
 export class PongGame {
 	constructor() {
@@ -13,7 +14,8 @@ export class PongGame {
 		this.controller1 = controller1;
 		this.controller2 = controller2;
 
-		if (mode === "REMOTE") {
+		console.log(mode);
+		if (mode === "remote") {
 			this.logic = new PongGameRemoteLogic(controller1, controller2, mode);
 		} else { // 기존 로직은 Local
 			this.logic = new PongGameLogic(controller1, controller2, mode);
