@@ -111,7 +111,8 @@ export class PongGameRemoteLogic {
 		// 	default:
 		// 		break;
 		// }
-		this.player2.position.x = position;
+		const [x] = position;
+		this.player2.position.x = x;		// this.player2.position.z = z;	}
 	}
 
 	ballUpdate({velocity, position}) {
