@@ -54,7 +54,7 @@ export class PongGameRemoteLogic {
 			position: { x: 0, y: 0, z: -80 },
 			score: 0,
 			userName: null,
-			controller: controller2
+			controller: new Controller(),
 		};
 		this.ball = {
 			position: { x: 0, y: 0, z: 0 },
