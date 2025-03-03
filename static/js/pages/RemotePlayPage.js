@@ -18,8 +18,8 @@ export default class RemotePlayPong extends Component {
     this.unSubscribe = PongManager.subscribe(this.subscribe);
   }
 
-  subscribe({mode, data}){ // data -> {[key:string]:?}
-    if(mode === 'READY'){
+  subscribe({mode, data}){ // data -> {[key:string]:}
+    if(mode === GAME_MODE.REMOTE){
       this.startPong();
     }
     console.log('listsen Remote', message);
@@ -37,7 +37,11 @@ export default class RemotePlayPong extends Component {
     });
   }
 
-
+/*
+  remote username이 없어 -> 근데 어짜피 우리 점수 띄워야함
+  animate에서 걍 '' 했다가 username 추적하고 userScore 그러면 스코어도 띄울수 있음 ->
+  fontloader를 animate에 박아버리자 -> 그러면 animate에서 바로 띄울수 있음
+*/
 
   template() {
     return `

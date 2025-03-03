@@ -13,16 +13,15 @@ export class PongGame {
 		this.controller1 = controller1;
 		this.controller2 = controller2;
 
-		// if (isRemote) {
-		// 	this.logic = new PongGameRemoteLogic(controller1, controller2, mode);
-		// } else { // 기존 로직은 Local
-		// 	this.logic = new PongGameLogic(controller1, controller2, mode);
-		// }
-		this.logic = new PongGameLogic(controller1, controller2, mode);
+		if (mode === "REMOTE") {
+			this.logic = new PongGameRemoteLogic(controller1, controller2, mode);
+		} else { // 기존 로직은 Local
+			this.logic = new PongGameLogic(controller1, controller2, mode);
+		}
+		// this.logic = new PongGameLogic(controller1, controller2, mode);
 		this.renderer = new PongGameRenderer(); // PongGameRenderer는 PongGameLogic을 받아서 그려주는 역할
 		await this.renderer.init(divID, this.logic);
 	}
-
 	async start() {
 		await this.renderer.loop();
 		this.logic.loop();

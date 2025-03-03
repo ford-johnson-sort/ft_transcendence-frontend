@@ -17,7 +17,7 @@ export class PongGameRenderer {
 	 * @param {*} player1Skin Player Skin (Defulat)
 	 * @param {*} player2Skin Player Skin (default)
 	 */
-	async init(divID, pongGameLogic, player1Skin, player2Skin) {
+	async init(divID, pongGameLogic) {
 		this.pongGameLogicInstance = pongGameLogic;
 		this.gltfLoader = new GLTFLoader();
 		this.scene = new THREE.Scene();
@@ -97,7 +97,6 @@ export class PongGameRenderer {
 	await this.setPlayer1UnitDefault();
 	await this.setPlayer2UnitDefault();
 	await this.setWallModel();
-
 	this.animate = this.animate.bind(this);
 	this.resizeListener = this.resizeListener.bind(this);
 	window.addEventListener('resize', this.resizeListener);
@@ -177,27 +176,10 @@ export class PongGameRenderer {
 			thrustLight.position.set(0, -6, -2); // 부모 객체의 로컬 좌표계 기준으로 위치 설정
 			this.player1Unit.add(thrustLight);
 			this.scene.add(this.player1Unit);
-			this.fontLoader.load("https://threejs.org/examples/fonts/helvetiker_regular.typeface.json", (font) => {
-				this.textGeometry = new TextGeometry(this.pongGameLogicInstance.player1.userName, {
-					// 텍스트 뚫어야함
-					font: font,
-					size: 1,
-					height: 0.000000000001,
-					curveSegments: 12,
-					bevelEnabled: false,
-					bevelThickness: 0.03,
-					bevelSize: 0.01,
-					bevelSegments: 5,
-					bevelThickness: 0.1,
-					depth: 0.1
-				});
-				this.textMaterial = new THREE.MeshPhongMaterial({ color: 0xffd700, shininess: 100 })
-				this.textMesh = new THREE.Mesh(this.textGeometry, this.textMaterial);
-				this.textGeometry.center();
-				this.textMesh.rotation.set(-Math.PI / 2, 0, 0)
-				this.textMesh.position.set(0, 0, 3);
-				this.player1Unit.add(this.textMesh);
-			});
+			if (this.pongGameLogicInstance.player1.userName == null) {
+				return ;
+			}
+			this.playerNameTextureLoad(this.pongGameLogicInstance.player1.userName, 'player1');
 		} catch (error) {
 			console.error("Error Loading Model: ", error);
 		}
@@ -224,30 +206,38 @@ export class PongGameRenderer {
 			thrustLight.position.set(0, 6, 4); // 부모 객체의 로컬 좌표계 기준으로 위치 설정
 			this.player2Unit.add(thrustLight);
 			this.scene.add(this.player2Unit);
-			this.fontLoader.load("https://threejs.org/examples/fonts/helvetiker_regular.typeface.json", (font) => {
-				this.textGeometry = new TextGeometry(this.pongGameLogicInstance.player2.userName, {
-					// 텍스트 뚫어야함
-					font: font,
-					size: 1,
-					height: 0.000000000001,
-					curveSegments: 12,
-					bevelEnabled: false,
-					bevelThickness: 0.03,
-					bevelSize: 0.01,
-					bevelSegments: 5,
-					bevelThickness: 0.1,
-					depth: 0.1
-				});
-				this.textGeometry.center();
-				this.textMaterial = new THREE.MeshPhongMaterial({ color: 0xffd700, shininess: 100 })
-				this.textMesh = new THREE.Mesh(this.textGeometry, this.textMaterial);
-				this.textMesh.rotation.set(Math.PI / 2, Math.PI, 0)
-				this.textMesh.position.set(0, 0, 3);
-				this.player2Unit.add(this.textMesh);
-			});
+			if (this.pongGameLogicInstance.player2.userName == null) {
+				return ;
+			}
+			this.playerNameTextureLoad(this.pongGameLogicInstance.player2.userName, 'player2');
 		} catch (error) {
 			console.error("Error Loading Model: ", error);
 		}
+	}
+
+	playerNameTextureLoad(name, id) {
+		this.fontLoader.load("https://threejs.org/examples/fonts/helvetiker_regular.typeface.json", (font) => {
+			const textGeometry = new TextGeometry(name, {
+				// 텍스트 뚫어야함
+				font: font,
+				size: 1,
+				height: 0.000000000001,
+				curveSegments: 12,
+				bevelEnabled: false,
+				bevelThickness: 0.03,
+				bevelSize: 0.01,
+				bevelSegments: 5,
+				bevelThickness: 0.1,
+				depth: 0.1
+			});
+			textGeometry.center();
+			const textMaterial = new THREE.MeshPhongMaterial({ color: 0xffd700, shininess: 100 });
+			const textMesh = new THREE.Mesh(this.textGeometry, this.textMaterial);
+			textMesh.rotation.set(Math.PI / 2, Math.PI, 0);
+			textMesh.position.set(0, 0, 3);
+			textMesh.name = id;
+			this.player2Unit.add(this.textMesh);
+		});
 	}
 
 	setTopView() {
@@ -355,6 +345,12 @@ export class PongGameRenderer {
 		}
 		// this.animateEnvironments();
 		this.animateGame();
+		if(this.pongGameLogicInstance.player1.userName && this.pongGameLogicInstance.player2.userName &&
+			!this.scene.getObjectByName('player1') && !this.scene.getObjectByName('player2')) {
+			this.playerNameTextureLoad(this.pongGameLogicInstance.player1.userName, 'player1');
+			this.playerNameTextureLoad(this.pongGameLogicInstance.player2.userName, 'player2');
+		}
+
 		this.renderer.render(this.scene, this.camera);
 	}
 
