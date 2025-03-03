@@ -1,7 +1,7 @@
 import CSSLaoder from "../common/CSSLoader.js";
 import Component from "../common/Component.js";
 import { PongGame } from "./game/PongGame.js";
-import PongManger from "./game/PongManager.js";
+import PongManager from "./game/PongManager.js";
 import { KeyboardController } from "./game/controller/KeyboardController.js"
 import { GAME_MODE } from "../constants/constants.js";
 import Tournament from '../utils/tournament.js';
@@ -19,8 +19,8 @@ export default class PongPage extends Component {
     const subscribe = (message) => {
       console.log(message);
     }
-    PongManger.setUser([...this.$state.players]);
-    this.unSubscribe = PongManger.subscribe(subscribe);
+    PongManager.setUser([...this.$state.players]);
+    this.unSubscribe = PongManager.subscribe(subscribe);
   }
 
 
@@ -42,7 +42,7 @@ export default class PongPage extends Component {
   }
 
   componentDidMount() {
-    PongManger.subscribe(({type, data})=>{
+    PongManager.subscribe(({type, data})=>{
       if (type == 'GAME_END') {
         const wrapper = document.querySelector('div[data-component="PongManager"]');
         wrapper.setAttribute('class', type);
@@ -51,7 +51,6 @@ export default class PongPage extends Component {
           <div class="vibration">
             <p>${data.winner}</p>
           </div>
-          <button class='restart'>RESTART</button>
           <button class='newGame'>NEW GAME</button>
           </div>
           <audio class='audio hidden' src="/static/assets/sound/And His Name is JOHN CENA - Sound Effect (HD).mp3" controls autoplay></audio>

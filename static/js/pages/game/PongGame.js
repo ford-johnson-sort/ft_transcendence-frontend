@@ -23,14 +23,6 @@ export class PongGame {
 		await this.renderer.init(divID, this.logic);
 	}
 
-	setHost(channel) {
-		this.logic.setHost(channel);
-	}
-
-	setGuest(channel) {
-		this.logic.setGuest(channel);
-	}
-
 	async start() {
 		await this.renderer.loop();
 		this.logic.loop();

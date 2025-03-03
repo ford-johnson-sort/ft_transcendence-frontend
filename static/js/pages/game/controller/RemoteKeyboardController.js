@@ -1,8 +1,18 @@
 import Controller from './Controller';
 
+
+/*
+	RemoteKeyboardController는 KeyboardController를 상속받아서
+	RemotePlayPage에서 사용하는 Controller이다.
+	RemotePlayPage에서는 KeyboardController를 사용하지 않고
+	RemoteKeyboardController를 사용한다.
+	RemoteKeyboardController는 키보드 이벤트를 받아서
+	게임을 조작하는 Controller이다.
+*/
 class RemoteKeyboardController extends Controller {
-	constructor() {
+	constructor(socket) {
 		super();
+    this.socket = socket;
 		this.initRemoteKeyboardListeners();
 	}
 
@@ -10,7 +20,6 @@ class RemoteKeyboardController extends Controller {
 		window.addEventListener('keydown', this.handleKeyDown.bind(this));
 		window.addEventListener('keyup', this.handleKeyUp.bind(this));
 	}
-
 	handleKeyDown(event) {
 		switch (event.key) {
 			case 'ArrowUp':
@@ -44,23 +53,27 @@ class RemoteKeyboardController extends Controller {
 	}
 
 	moveUp() {
-		console.log('Moving up');
+		this.socket.send()
 	}
 
 	moveDown() {
-		console.log('Moving down');
+				this.socket.send()
+
 	}
 
 	moveLeft() {
-		console.log('Moving left');
+				this.socket.send()
+
 	}
 
 	moveRight() {
-		console.log('Moving right');
+				this.socket.send()
+
 	}
 
 	stopMovement() {
-		console.log('Stopping movement');
+				this.socket.send()
+
 	}
 }
 

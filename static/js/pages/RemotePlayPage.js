@@ -1,7 +1,7 @@
 import CSSLaoder from "../common/CSSLoader.js";
 import Component from "../common/Component.js";
 import { PongGame } from "./game/PongGame.js";
-import PongManger from "./game/PongManager.js";
+import PongManager from "./game/PongManager.js";
 import { KeyboardController } from "./game/controller/KeyboardController.js"
 import { GAME_MODE } from "../constants/constants.js";
 import { GameApi } from "../utils/apis.js"
@@ -11,11 +11,11 @@ export default class RemotePlayPong extends Component {
     CSSLaoder.load('pongPage');
     const {matchType} = this.$props.params;
     if (matchType !== GAME_MODE.REMOTE) {
-      // TODO : 전역 모달 열어서 섹스하기
+      // TODO : 전역 모달 열어서 메시지 안내 후,  redirect
       return ;
     }
 
-    this.unSubscribe = PongManger.subscribe(this.subscribe);
+    this.unSubscribe = PongManager.subscribe(this.subscribe);
   }
 
   subscribe = (message) => {
@@ -27,7 +27,7 @@ export default class RemotePlayPong extends Component {
     if (!result) {
       throw new Error(error);
     }
-    PongManger.setState({
+    PongManager.setState({
       matchType: GAME_MODE.REMOTE,
       roomID: room_uuid,
       username

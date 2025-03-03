@@ -19,6 +19,20 @@ const MODE = Object.freeze({
 	GAME END,
 		- reason: ?
 */
+
+
+/**
+ * @method
+ * @method loop - PongGame.start ->
+ *
+ *
+ * @field
+ */
+
+/*
+	Start -> Logic, Renderer Loop 호출
+
+*/
 export class PongGameLogic {
 	constructor(controller1, controller2, mode) {
 		this.fieldWidth = 120;
@@ -27,7 +41,7 @@ export class PongGameLogic {
 		this.speedZ = 1.8;
 		let [user1, user2] = [null, null];
 
-		if([GAME_MODE.ONE_ON_ONE, GAME_MODE.TOURNAMENT].some(_mode => _mode === mode)){
+		if([GAME_MODE.ONE_ON_ONE, GAME_MODE.TOURNAMENT].some(_mode => _mode === mode)) {
 			[user1, user2] = PongManager.getUser();
 			console.log(user1, user2);
 		}
@@ -72,84 +86,16 @@ export class PongGameLogic {
 		this.delta = 1000.0 / 60.0;
 	}
 
-	setHost(channel) {
-
-		this.socket.onmessage = this.#recv.bind(this);
-	}
-
-	setGuest(channel) {
-		this.socket.onmessage = this.#recv.bind(this);
-		this.player2.controller.setRemote(this.socket);
-	}
-
-	#send() {
-		// 메시지에 player의 위치와 이름을 포함
-		const message = {
-			type: "MOVE_PADDLE",
-			data: {
-				movement: ""
-
-			}
-		};
-		this.socket.send(JSON.stringify(message));
-	}
-
-	#recv(event) {
-		const {type, data} = JSON.parse(event);
-		switch(type){
-			case MODE.WAIT : {
-				PongManager.notify({type, data: null});
-				break;
-			}
-			case MODE.READY : {
-				this.player1.userName = data.username;
-				this.player2.userName = data.opponent;
-				break;
-			}
-			case MODE.MOVE_PADDLE : {
-				this.player2.position.x = data.position;
-				break;
-			}
-			case MODE.MOVE_BALL : {
-				this.ball.velocity = data.velocity;
-				this.ball.position = data.position;
-				break;
-			}
-			case MODE.END_ROUNT : {
-				// 서버에서 안주니까 여기서 초기화 하고
-				this.ball.velocity.z = this.speedZ;
-				this.ball.velocity.x = 0;
-				this.ball.position.x = 0;
-				this.ball.position.z = 0;
-				this.player1.position.x = 0;
-				this.player2.position.x = 0;
-				this.pauseDuration = 1500;
-				this.player1.score = data.socre[0];
-				this.player2.score = data.socre[1];
-				break;
-			}
-			case MODE.END_GAME : {
-				return PongManager.notify({type, data});
-			}
-		}
-	}
-
 	async loop() {
 		this.startTime = performance.now();
 		if (this.endTime != null) {
-			this.delta = this.startTime - this.endTime;
+			this.delta = this.startTime - this.endTime; // 각 컴퓨터 성능에 따른 프레임 속도 계산으로 공의 속도를 조절
 		}
 		// Logic
 		if (this.pauseDuration) {
 			this.pauseDuration = Math.max(this.pauseDuration - this.delta, 0);
 		} else {
 			this.#update(this.delta / (1000.0 / 60.0));
-			if ((this.isHost || this.isGuest) && this.socket.readyState === WebSocket.OPEN) {
-				if (this.sendCount % 4 == 0) { // 30
-					this.#send();
-				}
-				this.sendCount++;
-			}
 		}
 		if (this.player1.score == this.targetScore || this.player2.score == this.targetScore) {
 			this.isEnd = true;
@@ -157,9 +103,6 @@ export class PongGameLogic {
 				this.winner = this.player1.userName;
 			} else {
 				this.winner = this.player2.userName;
-			}
-			if (this.isHost && this.socket.readyState === WebSocket.OPEN) {
-				this.#send();
 			}
 			return PongManager.notify({type: 'GAME_END', data:{winner: this.winner}});
 		}
@@ -175,6 +118,10 @@ export class PongGameLogic {
 		}
 	}
 
+	/*
+		State 에 따른 계산 업데이트 전체 부분이 들어있음 (충돌, 점수, 속도 계산)
+		클리언트에서 -> 서버로 주는거 KEY_PRESS OFF 값인데
+	*/
 	async #update(delta) {
 		console.count('udpate call');
 		// 컨트롤러값으로 기체 움직임 적용

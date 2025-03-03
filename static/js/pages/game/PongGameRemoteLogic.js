@@ -1,57 +1,105 @@
 import { PongGameRenderer } from "./PongGameRenderer.js";
+import PongManager from "./PongManager.js";
+
+const MOVEMENT = Object.freeze({
+	LEFT_START:"LEFT_START",
+	RIGHT_START:"RIGHT_START",
+	LEFT_END:"LEFT_END",
+	RIGHT_END:"RIGHT_END"
+});
+
+
+/*
+	왜 전체 로직을 긁어 왔냐
+	사실 저기 및에 있는 데이터만 잘돌아가면 REenderer가 잘 돌아감
+	그니까 문제는 데이터를 어떻게 주고 받을 것인가 이거임
+	그래서 이거를 가지고 렌더러를 만들어야함
+	RemoteKeyBoardController를 만들어서 이거를 가지고
+	서버에 넘겨줄 데이터를 만들어야함
+	이미 들어올떄 REMOTE로 들어오는거니까
+*/
 
 export class PongGameRemoteLogic {
-	constructor(mode) {
-			this.fieldWidth = 120;
-			this.fieldDepth = 170;
-			this.paddleWidth = 18;
-			this.speedZ = 1.8;
-			let [user1, user2] = [null, null];
+	constructor() {
+		const {roomID: UUID, username} = PongManager.getState();
+		this.socket = new WebSocket(`wss://${window.location.host}/game/ws/pong/${UUID}/${username}`);
+		this.socket.onmessage((socket, event)=> {
+			const payload = JSON.parse(event);
+			this.#onEvent(socket, payload);
+		})
+	}
 
-			if([GAME_MODE.ONE_ON_ONE, GAME_MODE.TOURNAMENT].some(_mode => _mode === mode)){
-				[user1, user2] = PongManager.getUser();
-				console.log(user1, user2);
-			}
 
-			this.player1 = {
-				position: { x: 0, y: 0, z: 80 },
-				score: 0,
-				userName: user1,
-				controller: controller1
-			};
-			this.player2 = {
-				position: { x: 0, y: 0, z: -80 },
-				score: 0,
-				userName: user2,
-				controller: controller2
-			};
-			this.ball = {
-				position: { x: 0, y: 0, z: 0 },
-				velocity: { x: 0, y: 0, z: this.speedZ }
-			};
-			// 이거 3개 필요하고
-			this.isPlayer1Strike = false;
-			this.isPlayer2Strike = false;
-			this.isWallStrike = false;
-			//
-			this.update = this.#update.bind(this);
-			this.loop = this.loop.bind(this);
-			this.targetScore = 1;
-			// 도달하면
-			this.pauseDuration = 1500;
-			this.startTime = null;
-			this.endTime = null;
-			this.isHost = false;
-			this.isGuest = false;
-			this.channel = null;
-			// 이 isEnd  {isdend, winner} -> game종료시 받아오기
-			this.isEnd = false;
-			this.winner = null;
-
-			this.sendCount = 0;
-			// 프레임 계산용 delta
-			this.delta = 1000.0 / 60.0;
+	#onEvent(socket, event){
+		if (['READY', 'WAIT', 'END_GAME', 'END_ROUND'].some(metaMode=> metaMode === event.type)) {
+			return this.#onGameMetaMessage(socket, event);
 		}
+		return this.#onGameMessage(socket, event);
+	}
+
+
+	#onGameMetaMessage(socket, {type, data}){
+		switch(type){
+			case 'END_GAME':
+				PongManager.notify({type, data});
+				this.isEnd = true;
+				socket.close();
+				break;
+			case "READY":
+				console.log('sexy food');
+				break;
+			case "WAIT":
+				PongManager.notify({type, data});
+				break;  asd
+			case "END_ROUND": {
+				this.#gameReset(); // 게임 리셋
+				break;
+			}
+		}
+	}
+
+	#onGameMessage(_, {type, data}){
+		switch(type){
+			case "MOVE_PADDLE":
+				this.#player2Update(data);
+				break;
+			case "MOVE_BALL":
+				this.#ballUpdate(data);
+				break;
+		}
+	}
+
+	#player2Update({movement, position}) {
+		if (movement === MOVEMENT.LEFT_START) {
+			this.player2.controller.left = movement === MOVEMENT.LEFT_START;
+		}
+		if (movement === MOVEMENT.RIGHT_START) {
+			this.player2.controller.right = movement === MOVEMENT.RIGHT_START;
+		}
+		if (movement === MOVEMENT.LEFT_END) {
+			this.player2.controller.left = movement === MOVEMENT.LEFT_END;
+		}
+		if (movement === MOVEMENT.RIGHT_END) {
+			this.player2.controller.right = movement === MOVEMENT.RIGHT_END;
+		}
+		this.player2.position.x = position;
+	}
+
+	#ballUpdate({velocity, position}) {
+		this.ball.velocity = velocity;
+		this.ball.position = position;
+	}
+
+
+	#gameReset() {
+		this.ball.velocity.z = -this.speedZ;
+		this.ball.velocity.x = 0;
+		this.ball.position.x = 0;
+		this.ball.position.z = 0;
+		this.player1.position.x = 0;
+		this.player2.position.x = 0;
+		this.pauseDuration = 1500;
+	}
 
 	async #update(delta) {
 		console.count('udpate call');
@@ -154,6 +202,30 @@ export class PongGameRemoteLogic {
 		} else if (this.ball.velocity.z < 0) {
 		  this.ball.velocity.z -= 0.001 * delta;
 		}
+	}
+
+	async loop() {
+		if (this.isEnd) {
+			return ;
+		}
+		this.startTime = performance.now();
+		if (this.endTime != null) {
+			this.delta = this.startTime - this.endTime; // 각 컴퓨터 성능에 따른 프레임 속도 계산으로 공의 속도를 조절
+		}
+		// Logic
+		if (this.pauseDuration) {
+			this.pauseDuration = Math.max(this.pauseDuration - this.delta, 0);
+		} else {
+			this.#update(this.delta / (1000.0 / 60.0));
+		}
+		this.endTime = performance.now();
+		let gapTime = this.startTime - this.endTime;
+		if (gapTime < (1000.0 / 60.0)) {
+			setTimeout(this.loop, (1000.0 / 60.0) - gapTime);
+		} else {
+			setTimeout(this.loop, 0);
+		}
+
 	}
 }
 

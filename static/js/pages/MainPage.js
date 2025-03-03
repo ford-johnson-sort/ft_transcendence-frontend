@@ -42,5 +42,3 @@ export default class MainPage extends Component {
   }
 }
 
-
-// PongManger.notify({status: 'end', winner: 'user 1'});

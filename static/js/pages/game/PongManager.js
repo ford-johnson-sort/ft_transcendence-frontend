@@ -1,34 +1,34 @@
-export default class PongManger {
+export default class PongManager {''
 	static _subscriber = new Set();
 	static _state = {};
 
 	static subscribe(fn) {
-	  PongManger._subscriber.add(fn);
+	  PongManager._subscriber.add(fn);
 	  return ()=> {
-			PongManger._subscriber.delete(fn);
+			PongManager._subscriber.delete(fn);
 	  }
 	}
 
 	static notify(state) {
-	  for (const fn of PongManger._subscriber){
+	  for (const fn of PongManager._subscriber){
 			fn(state);
 	  }
 	}
 
 	static getUser() {
-		return PongManger._user;
+		return PongManager._user;
 	}
 
 	static setUser(users) {
-		PongManger._user = users;
+		PongManager._user = users;
 	}
 
 	static setState(state) {
-		PongManger._state = {...PongManger._state, ...state};
+		PongManager._state = {...PongManager._state, ...state};
 	}
 
 	static getState(){
-		return PongManger._state;
+		return PongManager._state;
 	}
 
 }
@@ -51,4 +51,4 @@ export default class PongManger {
 */
 
 // PongGame => PongMagner.getUser(); -> 초기에 유저 정보얻얻기
-//  PongGAme => PongManger.notify(message) // mode WATI, REDADY, GAME_END
+
