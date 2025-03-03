@@ -23,12 +23,12 @@ export default class PongManger {
 		PongManger._user = users;
 	}
 
-	static setState(mode, state) {
-		PongManger._statea[mode] = {...PongManger._state[mode], ...state};
+	static setState(state) {
+		PongManger._state = {...PongManger._state, ...state};
 	}
 
 	static getState(){
-		return PongManger._RemoteState;
+		return PongManger._state;
 	}
 
 }
