@@ -116,8 +116,10 @@ export class PongGameRemoteLogic {
 	}
 
 	ballUpdate({velocity, position}) {
-		this.ball.velocity = velocity;
-		this.ball.position = position;
+		this.ball.velocity.x = velocity[0];
+		this.ball.velocity.z = velocity[1];
+		this.ball.position.x = position[0];
+		this.ball.position.z = position[1];
 		console.log("ballUpdate", this.ball);
 	}
 

@@ -48,7 +48,7 @@ export default class PongPage extends Component {
           </div>
           <button class='newGame'>NEW GAME</button>
           </div>
-          <audio class='audio hidden' src="/static/assets/sound/And His Name is JOHN CENA - Sound Effect (HD).mp3" controls autoplay></audio>
+          <audio class='audio hidden' src="/static/assets/sound/And His Name is JOHN CENA - Sound Effect (HD).mp3" controls></audio>
         </div>`;
         wrapper.addEventListener('click', (e)=>{
           if(e.target.closest('.restart')){

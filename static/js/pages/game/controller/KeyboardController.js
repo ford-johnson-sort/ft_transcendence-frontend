@@ -7,11 +7,12 @@ import { Controller } from "./Controller.js";
 export class KeyboardController extends Controller {
 	constructor(leftKeycode, rightKeycode) {
 		super();
-		this.updater = ()=>{};
+		this.updater = console.log;
 		this.leftKeycode = leftKeycode;
 		this.rightKeycode = rightKeycode;
 		this.keydownListener = this.keydownListener.bind(this);
 		this.keyupListener = this.keyupListener.bind(this);
+		this.lastKeyStroke = null;
 		window.addEventListener('keydown', this.keydownListener);
 		window.addEventListener('keyup', this.keyupListener);
 	}
@@ -28,7 +29,10 @@ export class KeyboardController extends Controller {
 			default:
 				return ;
 		}
-		this.updater("KEYDOWN", keycode);
+		if (this.lastKeyStroke !== keycode){
+			this.lastKeyStroke = keycode;
+			this.updater("KEYDOWN", keycode);
+		}
 	}
 
 	keyupListener(event) {
@@ -43,7 +47,10 @@ export class KeyboardController extends Controller {
 			default:
 				return ;
 		}
-		this.updater("KEYUP", keycode);
+		if (this.lastKeyStroke !== keycode){
+			this.lastKeyStroke = keycode;
+			this.updater("KEYDOWN", keycode);
+		}
 	}
 
 	setUpdater(fn) {
