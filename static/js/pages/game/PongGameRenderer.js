@@ -176,7 +176,7 @@ export class PongGameRenderer {
 			thrustLight.position.set(0, -6, -2); // 부모 객체의 로컬 좌표계 기준으로 위치 설정
 			this.player1Unit.add(thrustLight);
 			this.scene.add(this.player1Unit);
-			if (this.pongGameLogicInstance.player1.userName == null) {
+			if (!this.pongGameLogicInstance.player1.userName) {
 				return ;
 			}
 			this.playerNameTextureLoad(this.pongGameLogicInstance.player1.userName, 'player1');

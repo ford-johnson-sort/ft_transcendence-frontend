@@ -24,9 +24,51 @@ export class PongGameRemoteLogic {
 		const {roomID: UUID, username} = PongManager.getState();
 		this.socket = new WebSocket(`wss://${window.location.host}/game/ws/pong/${UUID}/${username}`);
 		this.socket.onmessage = (event)=> {
-			const payload = JSON.parse(event);
+			const payload = JSON.parse(event.data);
 			this.#onEvent(payload);
 		};
+		this.fieldWidth = 120;
+		this.fieldDepth = 170;
+		this.paddleWidth = 18;
+		this.speedZ = 1.8;
+		this.player1 = {
+			position: { x: 0, y: 0, z: 80 },
+			score: 0,
+			userName: null,
+			controller: controller1
+		};
+		this.player2 = {
+			position: { x: 0, y: 0, z: -80 },
+			score: 0,
+			userName: null,
+			controller: controller2
+		};
+		this.ball = {
+			position: { x: 0, y: 0, z: 0 },
+			velocity: { x: 0, y: 0, z: this.speedZ }
+		};
+		// 이거 3개 필요하고
+		this.isPlayer1Strike = false;
+		this.isPlayer2Strike = false;
+		this.isWallStrike = false;
+		//
+		this.update = this.#update.bind(this);
+		this.loop = this.loop.bind(this);
+		this.targetScore = 1;
+		// 도달하면
+		this.pauseDuration = 1500;
+		this.startTime = null;
+		this.endTime = null;
+		this.isHost = false;
+		this.isGuest = false;
+		this.channel = null;
+		// 이 isEnd  {isdend, winner} -> game종료시 받아오기
+		this.isEnd = false;
+		this.winner = null;
+
+		this.sendCount = 0;
+		// 프레임 계산용 delta
+		this.delta = 1000.0 / 60.0;
 	}
 
 
