@@ -65,7 +65,6 @@ export class PongGameRemoteLogic {
 		this.isPlayer2Strike = false;
 		this.isWallStrike = false;
 		//
-		this.update = this.#update.bind(this);
 		this.loop = this.loop.bind(this);
 		this.targetScore = 1;
 		// 도달하면
@@ -175,7 +174,7 @@ export class PongGameRemoteLogic {
 		this.pauseDuration = 1500;
 	}
 
-	async #update(delta) {
+	update = async (delta) => {
 		console.count('udpate call');
 		// 컨트롤러값으로 기체 움직임 적용
 		let player1Moved = false;
