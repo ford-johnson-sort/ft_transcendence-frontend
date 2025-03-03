@@ -23,7 +23,7 @@ export default class RemotePlayPong extends Component {
   }
 
   prepare = async () => {
-    const {result, username, room_uuid, error} = GameApi.match();
+    const {result, username, room_uuid, error} = await GameApi.match();
     if (!result) {
       throw new Error(error);
     }
