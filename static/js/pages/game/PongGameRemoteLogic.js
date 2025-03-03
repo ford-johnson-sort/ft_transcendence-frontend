@@ -151,8 +151,8 @@ export class PongGameRemoteLogic {
 	 * @param {"KEYUP" | "KEYDOWN"} type
 	 * @param {number} keycode
 	 */
-	sendMove(type, movement) {
-		const movement = MOVEMENT[type]?.[movement];
+	sendMove(type, keycode) {
+		const movement = MOVEMENT[type]?.[keycode];
 		if (!movement) return ;
 
 		this.socket.send(
