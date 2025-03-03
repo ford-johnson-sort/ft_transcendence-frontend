@@ -39,7 +39,7 @@ export class PongGameRemoteLogic {
 			this.#onEvent(payload);
 			console.log(payload);
 		};
-		controller1.setUpdater(this.#sendMove.bind(this));
+		controller1.setUpdater(this.sendMove.bind(this));
 		this.fieldWidth = 120;
 		this.fieldDepth = 170;
 		this.paddleWidth = 18;
@@ -152,7 +152,7 @@ export class PongGameRemoteLogic {
 	 * @param {"KEYUP" | "KEYDOWN"} type
 	 * @param {number} keycode
 	 */
-	#sendMove(type, movement) {
+	sendMove(type, movement) {
 		const movement = MOVEMENT[type]?.[movement];
 		if (!movement) return ;
 
