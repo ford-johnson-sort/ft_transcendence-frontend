@@ -7,6 +7,7 @@ import { Controller } from "./Controller.js";
 export class KeyboardController extends Controller {
 	constructor(leftKeycode, rightKeycode, upKeycode, downKeycode, hotKeycode) {
 		super();
+		this.updater = ()=>{};
 		this.leftKeycode = leftKeycode;
 		this.rightKeycode = rightKeycode;
 		this.upKeycode = upKeycode;
@@ -27,18 +28,10 @@ export class KeyboardController extends Controller {
 			case this.rightKeycode:
 				this.right = true;
 				break;
-			case this.upKeycode:
-				this.up = true;
-				break;
-			case this.downKeycode:
-				this.down = true;
-				break;
-			case this.hotKeycode:
-				this.hot = true;
-				break;
 			default:
-				break;
+				return ;
 		}
+		this.updater("KEYDOWN", keycode);
 	}
 
 	keyupListener(event) {
@@ -50,17 +43,13 @@ export class KeyboardController extends Controller {
 			case this.rightKeycode:
 				this.right = false;
 				break;
-			case this.upKeycode:
-				this.up = false;
-				break;
-			case this.downKeycode:
-				this.down = false;
-				break;
-			case this.hotKeycode:
-				this.hot = false;
-				break;
 			default:
-				break;
+				return ;
 		}
+		this.updater("KEYUP", keycode);
+	}
+
+	setUpdater(fn) {
+		this.updater = fn;
 	}
 }

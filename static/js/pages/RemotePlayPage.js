@@ -68,9 +68,8 @@ export default class RemotePlayPong extends Component {
   async preparePong(){
     this.pongGame = new PongGame();
     const key1 = new KeyboardController(37, 39, 38, 40, 32);
-    const key2 = new KeyboardController(65, 68, 87, 83, 70);
     console.log(this.$state.matchType);
-    await this.pongGame.init(key1, key2, "pong-game-container", 'remote');
+    await this.pongGame.init(key1, null, "pong-game-container", 'remote');
     this.startPong();
   }
 

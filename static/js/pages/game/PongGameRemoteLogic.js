@@ -1,3 +1,4 @@
+import { Controller } from "./controller/Controller.js";
 import { PongGameRenderer } from "./PongGameRenderer.js";
 import PongManager from "./PongManager.js";
 
@@ -5,7 +6,16 @@ const MOVEMENT = Object.freeze({
 	LEFT_START:"LEFT_START",
 	RIGHT_START:"RIGHT_START",
 	LEFT_END:"LEFT_END",
-	RIGHT_END:"RIGHT_END"
+	RIGHT_END:"RIGHT_END",
+	KEYUP: {
+		37: "LEFT_END",
+		39: "RIGHT_END"
+	},
+	KEYDOWN: {
+		37: "LEFT_START",
+		39: "RIGHT_START"
+	}
+
 });
 
 
@@ -29,6 +39,7 @@ export class PongGameRemoteLogic {
 			this.#onEvent(payload);
 			console.log(payload);
 		};
+		controller1.setUpdater(this.#sendMove.bind(this));
 		this.fieldWidth = 120;
 		this.fieldDepth = 170;
 		this.paddleWidth = 18;
@@ -47,7 +58,7 @@ export class PongGameRemoteLogic {
 		};
 		this.ball = {
 			position: { x: 0, y: 0, z: 0 },
-			velocity: { x: 0, y: 0, z: this.speedZ }
+			velocity: { x: 0, y: 0, z: 0 },
 		};
 		// 이거 3개 필요하고
 		this.isPlayer1Strike = false;
@@ -90,8 +101,8 @@ export class PongGameRemoteLogic {
 				this.socket.close();
 				break;
 			case "READY":
-				this.player2.username = data.opponent;
-				this.player1.username = data.username;
+				this.player2.userName = data.opponent;
+				this.player1.userName = data.username;
 				break;
 			case "WAIT":
 				PongManager.notify({type, data});
@@ -133,11 +144,29 @@ export class PongGameRemoteLogic {
 	#ballUpdate({velocity, position}) {
 		this.ball.velocity = velocity;
 		this.ball.position = position;
+		console.log("ballUpdate", this.ball);
+	}
+
+	/**
+	 *
+	 * @param {"KEYUP" | "KEYDOWN"} type
+	 * @param {number} keycode
+	 */
+	#sendMove(type, movement) {
+		const movement = MOVEMENT[type]?.[movement];
+		if (!movement) return ;
+
+		this.socket.send(
+			JSON.stringify({
+				type: "MOVE_PADDLE",
+				data: { movement }
+			}
+		));
 	}
 
 
 	#gameReset() {
-		this.ball.velocity.z = -this.speedZ;
+		this.ball.velocity.z = 0;
 		this.ball.velocity.x = 0;
 		this.ball.position.x = 0;
 		this.ball.position.z = 0;
