@@ -165,9 +165,6 @@ export class PongGameRemoteLogic {
 		if (this.player2.controller.right == true) {
 			this.player2.position.x += 1.5 * delta;
 		}
-		if (Math.abs(this.player1.controller.stick.x) > 0.05 && player1Moved == false) {
-			this.player1.position.x += 1.5 * this.player1.controller.stick.x * delta;
-		}
 		// 기체 움직임 범위 제한
 		this.player1.position.x = Math.max(
 			-this.fieldWidth / 2 + this.paddleWidth / 2,
