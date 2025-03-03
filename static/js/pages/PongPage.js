@@ -2,23 +2,35 @@ import CSSLaoder from "../common/CSSLoader.js";
 import Component from "../common/Component.js";
 import { PongGame } from "./game/PongGame.js";
 import PongManger from "./game/PongManager.js";
-import { KeyboardController } from "./game/controller/KeyboardController.js";
+import { KeyboardController } from "./game/controller/KeyboardController.js"
+import { GAME_MODE } from "../constants/constants.js";
+import Tournament from '../utils/tournament.js';
+import {Router} from '../common/Router.js';
 
 export default class PongPage extends Component {
   setup() {
-    console.log('setup',this.$props.params);
-    const players = JSON.parse(localStorage.getItem('playerNames') || '[]');
-    console.log(players);
     CSSLaoder.load('pongPage');
-    // localStorage.removeItem('playerNames');
-    // this.children = [{
+    const {matchType} = this.$props.params;
+    if ([GAME_MODE.ONE_ON_ONE, GAME_MODE.TOURNAMENT].some(type=> type === matchType)) {
+      const players = JSON.parse(localStorage.getItem('playerNames') || '[]');
 
-    // }]
+      this.$state = { players, matchType };
+    }
+    const subscribe = (message) => {
+      console.log(message);
+    }
+    PongManger.setUser([...this.$state.players]);
+    this.unSubscribe = PongManger.subscribe(subscribe);
   }
+
+
+
+
+
 
   template() {
     return `
-    <div data-component="waitWrapper"></div>
+    <div data-component="PongManager"></div>
     <div id='pong-game-container'>
         <div id="pongCanvas"></div>
     </div>
@@ -29,17 +41,31 @@ export default class PongPage extends Component {
 
   }
 
-
   componentDidMount() {
-    console.log(this.$props.params);
     PongManger.subscribe(({type, data})=>{
       if (type == 'GAME_END') {
-        const wrapper = document.querySelector('div[data-component="waitWrapper"]');
+        const wrapper = document.querySelector('div[data-component="PongManager"]');
         wrapper.setAttribute('class', type);
-        wrapper.innerHTML = data.winner;
+        wrapper.innerHTML = `
+        <div>
+          <div class="vibration">
+            <p>${data.winner}</p>
+          </div>
+          <button class='restart'>RESTART</button>
+          <button class='newGame'>NEW GAME</button>
+          </div>
+          <audio class='audio hidden' src="/static/assets/sound/And His Name is JOHN CENA - Sound Effect (HD).mp3" controls autoplay></audio>
+        </div>`;
+        wrapper.addEventListener('click', (e)=>{
+          if(e.target.closest('.restart')){
+            this.wrapper.innerHTML= '';
+            return this.startPongGame();
+          }
+          if (e.target.closest('.newGame')){
+            return Router.push('/main');
+          }
+        })
       }
-
-      this.setState({sex: data.winner});
     });
 
     setTimeout(()=>{
@@ -49,17 +75,17 @@ export default class PongPage extends Component {
 
 
 
-  componentWillUpdate(){
-    setTimeout(()=>{
-      this.startPongGame();
-    }, 0);
-  }
+  componentWillUpdate(){}
 
   async startPongGame(){
     const pongGame = new PongGame();
     const key1 = new KeyboardController(37, 39, 38, 40, 32);
     const key2 = new KeyboardController(65, 68, 87, 83, 70);
-    await pongGame.init(key1, key2, "Default", "Default", "pong-game-container");
+    await pongGame.init(key1, key2, "pong-game-container", this.$state.matchType);
     pongGame.start();
+  }
+
+  componentWillUnmount(){
+    this.unSubscribe();
   }
 }

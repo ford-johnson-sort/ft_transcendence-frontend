@@ -1,6 +1,6 @@
 import { PongGameLogic } from "./PongGameLogic.js";
 import { PongGameRenderer } from "./PongGameRenderer.js";
-
+import { PongGameRemoteLogic } from "./PongGameRemoteLogic.js";
 
 export class PongGame {
 	constructor() {
@@ -9,12 +9,18 @@ export class PongGame {
 		});
 	}
 
-	async init(controller1, controller2, skin1, skin2, divID){
+	async init(controller1, controller2, divID, mode){
 		this.controller1 = controller1;
 		this.controller2 = controller2;
-		this.logic = new PongGameLogic(controller1, controller2);
-		this.renderer = new PongGameRenderer();
-		await this.renderer.init(divID, this.logic, skin1, skin2);
+
+		// if (isRemote) {
+		// 	this.logic = new PongGameRemoteLogic(controller1, controller2, mode);
+		// } else { // 기존 로직은 Local
+		// 	this.logic = new PongGameLogic(controller1, controller2, mode);
+		// }
+		this.logic = new PongGameLogic(controller1, controller2, mode);
+		this.renderer = new PongGameRenderer(); // PongGameRenderer는 PongGameLogic을 받아서 그려주는 역할
+		await this.renderer.init(divID, this.logic);
 	}
 
 	setHost(channel) {
@@ -31,7 +37,6 @@ export class PongGame {
 	}
 
 	async isEnd() {
-		// Promise 반환
 		return new Promise((resolve) => {
 			const checkInterval = 100; // 체크 주기 (ms)
 

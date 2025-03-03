@@ -9,13 +9,18 @@ export default class Tournament {
           return [i, origin[idx+1]]
         }
       }).filter(i=>i);
+    this._gen = this._nextMatchGenerator();
   }
 
 
-  *nextMatchGenerator() {
+  *_nextMatchGenerator() {
     for(let i = 0; i < this.match.length; i++) {
       yield this.match[i];
     }
+  }
+
+  next() {
+    return this._gen.next();
   }
 
   addResult(winner){

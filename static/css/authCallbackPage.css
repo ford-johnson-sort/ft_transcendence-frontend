@@ -1,0 +1,27 @@
+#authpage--main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+#authpage--message--container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+  width: fit-content;
+  margin: 0 auto;
+}
+
+#auth--header h1 ::before {
+  color: #000;
+  font-size: 4rem;
+}
+
+#auth--description {
+  white-space: break-spaces;
+  text-align: center;
+}

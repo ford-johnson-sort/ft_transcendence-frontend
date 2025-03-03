@@ -178,7 +178,7 @@ export class PongGameRenderer {
 			this.player1Unit.add(thrustLight);
 			this.scene.add(this.player1Unit);
 			this.fontLoader.load("https://threejs.org/examples/fonts/helvetiker_regular.typeface.json", (font) => {
-				this.textGeometry = new TextGeometry("Janhan", {
+				this.textGeometry = new TextGeometry(this.pongGameLogicInstance.player1.userName, {
 					// 텍스트 뚫어야함
 					font: font,
 					size: 1,
@@ -193,8 +193,9 @@ export class PongGameRenderer {
 				});
 				this.textMaterial = new THREE.MeshPhongMaterial({ color: 0xffd700, shininess: 100 })
 				this.textMesh = new THREE.Mesh(this.textGeometry, this.textMaterial);
+				this.textGeometry.center();
 				this.textMesh.rotation.set(-Math.PI / 2, 0, 0)
-				this.textMesh.position.set(-2, 0, 3);
+				this.textMesh.position.set(0, 0, 3);
 				this.player1Unit.add(this.textMesh);
 			});
 		} catch (error) {
@@ -223,6 +224,27 @@ export class PongGameRenderer {
 			thrustLight.position.set(0, 6, 4); // 부모 객체의 로컬 좌표계 기준으로 위치 설정
 			this.player2Unit.add(thrustLight);
 			this.scene.add(this.player2Unit);
+			this.fontLoader.load("https://threejs.org/examples/fonts/helvetiker_regular.typeface.json", (font) => {
+				this.textGeometry = new TextGeometry(this.pongGameLogicInstance.player2.userName, {
+					// 텍스트 뚫어야함
+					font: font,
+					size: 1,
+					height: 0.000000000001,
+					curveSegments: 12,
+					bevelEnabled: false,
+					bevelThickness: 0.03,
+					bevelSize: 0.01,
+					bevelSegments: 5,
+					bevelThickness: 0.1,
+					depth: 0.1
+				});
+				this.textGeometry.center();
+				this.textMaterial = new THREE.MeshPhongMaterial({ color: 0xffd700, shininess: 100 })
+				this.textMesh = new THREE.Mesh(this.textGeometry, this.textMaterial);
+				this.textMesh.rotation.set(Math.PI / 2, Math.PI, 0)
+				this.textMesh.position.set(0, 0, 3);
+				this.player2Unit.add(this.textMesh);
+			});
 		} catch (error) {
 			console.error("Error Loading Model: ", error);
 		}
@@ -280,9 +302,7 @@ export class PongGameRenderer {
 
 	animateGame() {
 		// 플레이어 위치 반영
-		console.log(this);
-		console.log(this.pongGameLogicInstance);
-		console.log(this.player1Unit);
+
 		this.player1Unit.position.x = this.pongGameLogicInstance.player1.position.x;
 		this.player2Unit.position.x = this.pongGameLogicInstance.player2.position.x;
 

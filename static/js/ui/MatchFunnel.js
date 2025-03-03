@@ -1,13 +1,6 @@
 import Component from "../common/Component.js";
-
-export const MATCH_FORM_SELECTOR = '.match-form';
-const GAME_MODE = Object.freeze({
-  LOCAL: 'local',
-  ONE_ON_ON: '1on1',
-  REMOTE: 'remote',
-  TOURNAMENT: 'tournament'
-});
-
+import { GAME_MODE } from "../constants/constants.js";
+export const MATCH_FORM_SELECTOR = ".match-form";
 
 export class MatchFunnel extends Component {
   setup() {
@@ -62,7 +55,7 @@ export class MatchFunnel extends Component {
           <button class="btn btn-secondary back-button">Back</button>
         </div>
         <div class="button-container">
-          <button class="btn btn-success matchButton" data-match-type="${GAME_MODE.ONE_ON_ON}">1 VS 1</button>
+          <button class="btn btn-success matchButton" data-match-type="${GAME_MODE.ONE_ON_ONE}">1 VS 1</button>
           <button class="btn btn-success matchButton" data-match-type="${GAME_MODE.TOURNAMENT}">TOURNARMENT PLAY</button>
         </div>
       </div>
@@ -103,7 +96,7 @@ export class MatchFunnel extends Component {
     if(matchType === GAME_MODE.REMOTE){
       return this.startGame({matchType});
     }
-    if(matchType === GAME_MODE.ONE_ON_ON){
+    if(matchType === GAME_MODE.ONE_ON_ONE){
       return this.setState({matchType, matchUserAmount: 2, currentStep: currentStep+1});
     }
     if(currentStep === 2 && matchType === GAME_MODE.TOURNAMENT){

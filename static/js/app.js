@@ -5,6 +5,8 @@ import MainPage from './pages/MainPage.js';
 import PongPage from './pages/PongPage.js';
 import PongPageRenew from './pages/PongPageRenew.js';
 import HomePage from './pages/HomePage.js'
+import AuthCallback from './pages/AuthCallback.js'
+import RemotePlayPong from './pages/RemotePlayPage.js';
 
 function initializeApp() {
   const appContainer = document.getElementById('root');
@@ -19,7 +21,7 @@ function initializeApp() {
   // OAuth 콜백 처리
 
   router.addRoute('/', HomePage);
-
+  router.addRoute('/login/callback', AuthCallback);
 
   /// MFA -> mail인증 /login/callback
 
@@ -31,6 +33,7 @@ function initializeApp() {
   // local Play -> 1 vs 1, 토너먼트
   // router.addRoute('/pong/:matchType', PongPageRenew);
   // mathcType == local / remote / tournerment
+  router.addRoute('/pong/remote', RemotePlayPong);
   router.addRoute('/pong/:matchType', PongPage);
   // router.addRoute('/pong', PongPageRenew);
 

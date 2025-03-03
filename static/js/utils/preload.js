@@ -51,7 +51,6 @@ export class Preload {
 
 
 (function init() {
-	console.log("SEX");
 	if (!Preload.camera)
 		Preload.createCamera();
 	if (!Preload.renderer)

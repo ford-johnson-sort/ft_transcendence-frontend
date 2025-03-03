@@ -1,3 +1,3 @@
-export const Default LocalPlayPage {
+export const Default OneOnOnePage {
 
 }
