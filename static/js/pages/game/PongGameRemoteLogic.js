@@ -20,12 +20,14 @@ const MOVEMENT = Object.freeze({
 */
 
 export class PongGameRemoteLogic {
-	constructor() {
+	constructor(controller1, controller2) {
 		const {roomID: UUID, username} = PongManager.getState();
 		this.socket = new WebSocket(`wss://${window.location.host}/game/ws/pong/${UUID}/${username}`);
 		this.socket.onmessage = (event)=> {
+			console.log(event);
 			const payload = JSON.parse(event.data);
 			this.#onEvent(payload);
+			console.log(payload);
 		};
 		this.fieldWidth = 120;
 		this.fieldDepth = 170;

@@ -1,5 +1,6 @@
 import PongManager from './PongManager.js'
 import { GAME_MODE } from '../../constants/constants.js';
+import { KeyboardController } from './controller/KeyboardController.js';
 
 
 const MODE = Object.freeze({

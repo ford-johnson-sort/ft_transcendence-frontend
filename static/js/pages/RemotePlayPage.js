@@ -14,10 +14,10 @@ export default class RemotePlayPong extends Component {
     this.unSubscribe = PongManager.subscribe(this.subscribe);
   }
 
-  subscribe({mode, data}){ // data -> {[key:string]:}
+  subscribe(message){ // data -> {[key:string]:}
     // if(mode === 'READY'){
       // this.startPong();
-    // }
+    // }zx
     console.log('listsen Remote', message);
   }
 
