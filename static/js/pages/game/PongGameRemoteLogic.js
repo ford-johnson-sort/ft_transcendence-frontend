@@ -23,27 +23,27 @@ export class PongGameRemoteLogic {
 	constructor() {
 		const {roomID: UUID, username} = PongManager.getState();
 		this.socket = new WebSocket(`wss://${window.location.host}/game/ws/pong/${UUID}/${username}`);
-		this.socket.onmessage((socket, event)=> {
+		this.socket.onmessage = (event)=> {
 			const payload = JSON.parse(event);
-			this.#onEvent(socket, payload);
-		})
+			this.#onEvent(payload);
+		};
 	}
 
 
-	#onEvent(socket, event){
+	#onEvent(event){
 		if (['READY', 'WAIT', 'END_GAME', 'END_ROUND'].some(metaMode=> metaMode === event.type)) {
-			return this.#onGameMetaMessage(socket, event);
+			return this.#onGameMetaMessage(event);
 		}
-		return this.#onGameMessage(socket, event);
+		return this.#onGameMessage(event);
 	}
 
 
-	#onGameMetaMessage(socket, {type, data}){
+	#onGameMetaMessage({type, data}){
 		switch(type){
 			case 'END_GAME':
 				PongManager.notify({type, data});
 				this.isEnd = true;
-				socket.close();
+				this.socket.close();
 				break;
 			case "READY":
 				this.player2.username = data.opponent;
@@ -59,7 +59,7 @@ export class PongGameRemoteLogic {
 		}
 	}
 
-	#onGameMessage(_, {type, data}){
+	#onGameMessage({type, data}){
 		switch(type){
 			case "MOVE_PADDLE":
 				this.#player2Update(data);
