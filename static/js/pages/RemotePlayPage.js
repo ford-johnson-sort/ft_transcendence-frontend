@@ -19,9 +19,9 @@ export default class RemotePlayPong extends Component {
   }
 
   subscribe({mode, data}){ // data -> {[key:string]:}
-    if(mode === GAME_MODE.REMOTE){
-      this.startPong();
-    }
+    // if(mode === 'READY'){
+      // this.startPong();
+    // }
     console.log('listsen Remote', message);
   }
 
@@ -74,7 +74,7 @@ export default class RemotePlayPong extends Component {
     const key1 = new KeyboardController(37, 39, 38, 40, 32);
     const key2 = new KeyboardController(65, 68, 87, 83, 70);
     await this.pongGame.init(key1, key2, "pong-game-container", this.$state.matchType);
-    // pongGame.start();
+    this.startPong();
   }
 
   startPong(){
