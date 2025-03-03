@@ -3,7 +3,7 @@ import Component from "../common/Component.js";
 import { PongGame } from "./game/PongGame.js";
 import PongManager from "./game/PongManager.js";
 import { KeyboardController } from "./game/controller/KeyboardController.js"
-import { GAME_MODE } from "../constants/constants.js";
+import { MATCH_TYPE } from "../constants/constants.js";
 import { GameApi } from "../utils/apis.js"
 
 export default class RemotePlayPong extends Component {
@@ -27,7 +27,7 @@ export default class RemotePlayPong extends Component {
       throw new Error(error);
     }
     PongManager.setState({
-      matchType: GAME_MODE.REMOTE,
+      matchType: MATCH_TYPE.REMOTE,
       roomID: room_uuid,
       username
     });

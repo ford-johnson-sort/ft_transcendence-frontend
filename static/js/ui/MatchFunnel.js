@@ -1,5 +1,5 @@
 import Component from "../common/Component.js";
-import { GAME_MODE } from "../constants/constants.js";
+import { MATCH_TYPE } from "../constants/constants.js";
 export const MATCH_FORM_SELECTOR = ".match-form";
 
 export class MatchFunnel extends Component {
@@ -23,7 +23,6 @@ export class MatchFunnel extends Component {
 
   template() {
     const { currentStep } = this.$state;
-    console.log('currnetStep', currentStep);
     return `
       <div class="funnel-container">
         ${currentStep === 1 ? this.renderStep1() : ''}
@@ -40,8 +39,8 @@ export class MatchFunnel extends Component {
           <h3>Select Game Type</h3>
         </div>
         <div class="button-container">
-          <button class="btn btn-success matchButton" data-match-type="${GAME_MODE.LOCAL}">LOCAL PLAY</button>
-          <button class="btn btn-success matchButton" data-match-type="${GAME_MODE.REMOTE}">REMOTE PLAY</button>
+          <button class="btn btn-success matchButton" data-match-type="${MATCH_TYPE.LOCAL}">LOCAL PLAY</button>
+          <button class="btn btn-success matchButton" data-match-type="${MATCH_TYPE.REMOTE}">REMOTE PLAY</button>
         </div>
       </div>
     `;
@@ -55,8 +54,8 @@ export class MatchFunnel extends Component {
           <button class="btn btn-secondary back-button">Back</button>
         </div>
         <div class="button-container">
-          <button class="btn btn-success matchButton" data-match-type="${GAME_MODE.ONE_ON_ONE}">1 VS 1</button>
-          <button class="btn btn-success matchButton" data-match-type="${GAME_MODE.TOURNAMENT}">TOURNARMENT PLAY</button>
+          <button class="btn btn-success matchButton" data-match-type="${MATCH_TYPE.ONE_ON_ONE}">1 VS 1</button>
+          <button class="btn btn-success matchButton" data-match-type="${MATCH_TYPE.TOURNAMENT}">TOURNARMENT PLAY</button>
         </div>
       </div>
     `;
@@ -77,10 +76,8 @@ export class MatchFunnel extends Component {
   }
 
   setEvent() {
-    console.log('setup event');
     this.$target.addEventListener('click', this.handleClick);
     if (this.$state.currentStep === 3){
-      console.log('here');
       const form = this.$target.querySelector(MATCH_FORM_SELECTOR);
       if(form){
         form.addEventListener('keypress', this.handleKeyPress);
@@ -93,13 +90,13 @@ export class MatchFunnel extends Component {
     const matchType = button.dataset.matchType;
     const { currentStep } = this.$state;
     console.count('fire')
-    if(matchType === GAME_MODE.REMOTE){
+    if(matchType === MATCH_TYPE.REMOTE){
       return this.startGame({matchType});
     }
-    if(matchType === GAME_MODE.ONE_ON_ONE){
+    if(matchType === MATCH_TYPE.ONE_ON_ONE){
       return this.setState({matchType, matchUserAmount: 2, currentStep: currentStep+1});
     }
-    if(currentStep === 2 && matchType === GAME_MODE.TOURNAMENT){
+    if(currentStep === 2 && matchType === MATCH_TYPE.TOURNAMENT){
       this.setState({currentStep:currentStep+1, matchUserAmount: 4, matchType});
     }
     return this.setState({currentStep: currentStep+1 });

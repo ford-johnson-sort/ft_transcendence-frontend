@@ -26,7 +26,6 @@ export class Router extends Component {
       data: null,
       error: null
     };
-    console.log('Router setup completed', this.$state);
   }
 
   componentDidMount() {
@@ -359,13 +358,11 @@ export class Router extends Component {
       // 활성 컴포넌트 이미 존재하고, 상태 변경이 activeComponent만 해당되는 경우 스킵
       if (safeState.activeComponent && activeComponentChanged &&
           !pathChanged && !routesChanged && !loadingChanged && !dataChanged && !errorChanged) {
-        console.log("Skipping redundant active component update");
         return;
       }
 
       // 관련 상태가 변경된 경우에만 컴포넌트 업데이트
       if (pathChanged || routesChanged || loadingChanged || dataChanged || errorChanged) {
-        console.log("Router state changed, updating active component");
         this.updateActiveComponent();
       }
     } catch (error) {
@@ -398,7 +395,6 @@ export class Router extends Component {
       const data = safeState.data;
       const error = safeState.error;
 
-      console.log(`Updating active component for path: ${currentPath}`);
 
       // 기존 활성 컴포넌트가 있다면 언마운트
       if (safeState.activeComponent) {
@@ -418,7 +414,6 @@ export class Router extends Component {
 
           // 기존 활성 컴포넌트와 동일한 컴포넌트 타입이면 별도 처리
           const componentClassName = currentRoute.component.name;
-          console.log(`Creating new component: ${componentClassName}`);
 
           // 새 컴포넌트 마운트
           const component = new currentRoute.component(this.$target, {

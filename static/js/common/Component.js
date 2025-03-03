@@ -173,7 +173,6 @@ export default class Component {
       // props 변화가 없으면 불필요한 업데이트 방지
       const hasChanged = Object.keys(newProps).some(key => this.$props[key] !== newProps[key]);
       if (!hasChanged) {
-        console.log(`Skipping setProps - no change detected in ${this.constructor.name}`);
         return;
       }
 

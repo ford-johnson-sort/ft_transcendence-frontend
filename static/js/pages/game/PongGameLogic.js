@@ -3,9 +3,12 @@ import { GAME_MODE } from '../../constants/constants.js';
 import { KeyboardController } from './controller/KeyboardController.js';
 
 
-const MODE = Object.freeze({
+const SEX_MODE = Object.freeze({
+	PUSH: "huh"
+	INSERT: 'ang',
 	READY: 'READY',
 })
+
 /**
 	WAIT = 대기중 접속 후 무조건 뜨는 상태
 	READY?

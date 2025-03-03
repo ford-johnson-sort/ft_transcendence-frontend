@@ -3,7 +3,7 @@ import Component from "../common/Component.js";
 import { PongGame } from "./game/PongGame.js";
 import PongManager from "./game/PongManager.js";
 import { KeyboardController } from "./game/controller/KeyboardController.js"
-import { GAME_MODE } from "../constants/constants.js";
+import { MATCH_TYPE } from "../constants/constants.js";
 import Tournament from '../utils/tournament.js';
 import {Router} from '../common/Router.js';
 
@@ -11,7 +11,7 @@ export default class PongPage extends Component {
   setup() {
     CSSLaoder.load('pongPage');
     const {matchType} = this.$props.params;
-    if ([GAME_MODE.ONE_ON_ONE, GAME_MODE.TOURNAMENT].some(type=> type === matchType)) {
+    if ([MATCH_TYPE.ONE_ON_ONE, MATCH_TYPE.TOURNAMENT].some(type=> type === matchType)) {
       const players = JSON.parse(localStorage.getItem('playerNames') || '[]');
 
       this.$state = { players, matchType };
@@ -22,11 +22,6 @@ export default class PongPage extends Component {
     PongManager.setUser([...this.$state.players]);
     this.unSubscribe = PongManager.subscribe(subscribe);
   }
-
-
-
-
-
 
   template() {
     return `

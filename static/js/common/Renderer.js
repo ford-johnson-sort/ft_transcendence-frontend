@@ -89,7 +89,6 @@ export default class Renderer {
           component.childrenContainers[id] = container;
         }
       });
-      console.log('rendering children', component);
       Renderer.renderChildren(component);
       component.setEvent();
     } catch (error) {
@@ -264,7 +263,6 @@ export default class Renderer {
 
       // 컴포넌트 타입 로깅 (라우터 식별을 위해)
       const componentType = component.constructor.name;
-      console.log(`Enqueueing update for ${componentType} (${component.$id})`);
 
       // 업데이트 대기열에 추가
       Renderer.updateQueue.add(component);
@@ -357,7 +355,6 @@ export default class Renderer {
           const prevState = metadata.prevState || {};
 
           // 디버깅을 위한 로그
-          console.log(`Processing update for ${component.constructor.name} (${component.$id})`);
 
           // Router 컴포넌트의 특별 처리 (무한 업데이트 방지)
           if (component.constructor.name === 'Router') {
@@ -409,14 +406,6 @@ export default class Renderer {
 
       // 다음 배치 처리 확인 (최대 재귀 방지를 위한 카운터 추가)
       const updateQueueSize = Renderer.updateQueue.size;
-
-      if (updateQueueSize > 0) {
-        console.log(`${updateQueueSize} components in queue after processing`);
-
-        // 무한 루프 방지 안전장치
-        const queueItems = [...Renderer.updateQueue].map(c => `${c.constructor.name}(${c.$id})`);
-        console.log("Components in next queue:", queueItems);
-      }
 
       setTimeout(() => {
         if (Renderer.updateQueue.size > 0) {
