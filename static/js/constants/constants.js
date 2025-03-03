@@ -27,8 +27,8 @@ export const MOVEMENT = Object.freeze({
 export const GAME_MODE = Object.freeze({
 	WAIT:'WAIT',
 	READY: 'READY',
-	PADDLE: 'MOVE_PADDLE',
-	BALL: 'MOVE_BALL',
+	MOVE_PADDLE: 'MOVE_PADDLE',
+	MOVE_BALL: 'MOVE_BALL',
 	END_GAME: 'END_GAME',
 	END_ROUND: 'END_ROUND',
 	META_EVENTS: ['READY', 'WAIT', 'END_GAME', 'END_ROUND']
