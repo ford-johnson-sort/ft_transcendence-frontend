@@ -245,23 +245,23 @@ export class PongGameRenderer {
 		this.camera.lookAt(new THREE.Vector3(0, 0, 0));
 	}
 
-	tiltZ(object, targetRotationZ) {
-		if (targetRotationZ == object.rotation.z) {
-			return ;
-		} else {
-			if (targetRotationZ > object.rotation.z) {
-				object.rotation.z += 0.04;
-				if (object.rotation.z > targetRotationZ) {
-					object.rotation.z = targetRotationZ;
-				}
-			} else if (targetRotationZ < object.rotation.z) {
-				object.rotation.z -= 0.04;
-				if (object.rotation.z < targetRotationZ) {
-					object.rotation.z = targetRotationZ
-				}
-			}
-		}
-	}
+	// tiltZ(object, targetRotationZ) {
+	// 	if (targetRotationZ == object.rotation.z) {
+	// 		return ;
+	// 	} else {
+	// 		if (targetRotationZ > object.rotation.z) {
+	// 			object.rotation.z += 0.04;
+	// 			if (object.rotation.z > targetRotationZ) {
+	// 				object.rotation.z = targetRotationZ;
+	// 			}
+	// 		} else if (targetRotationZ < object.rotation.z) {
+	// 			object.rotation.z -= 0.04;
+	// 			if (object.rotation.z < targetRotationZ) {
+	// 				object.rotation.z = targetRotationZ
+	// 			}
+	// 		}
+	// 	}
+	// }
 
 	shakeCamera(camera, duration = 100, intensity = 0.05) {
 		const startTime = Date.now();
@@ -282,17 +282,8 @@ export class PongGameRenderer {
 		shake();
 	}
 
-	// TODO: 현재 미구현 사항
-	animateEnvironments() {
-		const rotaitonSpeed = (Math.abs(this.pongGameLogicInstance.ball.velocity.z) / 1.8) / 85;
-		this.scene.environmentRotation.z += rotaitonSpeed;
-		this.scene.backgroundRotation.z += rotaitonSpeed;
-		// this.spaceStation.rotation.y += 0.01;
-	}
-
 	animateGame() {
 		// 플레이어 위치 반영
-
 		this.player1Unit.position.x = this.pongGameLogicInstance.player1.position.x;
 		this.player2Unit.position.x = this.pongGameLogicInstance.player2.position.x;
 
@@ -343,7 +334,6 @@ export class PongGameRenderer {
 			// this.dispose();
 			return ;
 		}
-		// this.animateEnvironments();
 		this.animateGame();
 		if(this.pongGameLogicInstance.player1.userName && this.pongGameLogicInstance.player2.userName &&
 			!this.scene.getObjectByName('player1') && !this.scene.getObjectByName('player2')) {

@@ -5,14 +5,11 @@ import { Controller } from "./Controller.js";
  * leftKey, rightKey, Upkey, DownKey, HotKey Codes
  */
 export class KeyboardController extends Controller {
-	constructor(leftKeycode, rightKeycode, upKeycode, downKeycode, hotKeycode) {
+	constructor(leftKeycode, rightKeycode) {
 		super();
 		this.updater = ()=>{};
 		this.leftKeycode = leftKeycode;
 		this.rightKeycode = rightKeycode;
-		this.upKeycode = upKeycode;
-		this.downKeycode = downKeycode;
-		this.hotKeycode = hotKeycode;
 		this.keydownListener = this.keydownListener.bind(this);
 		this.keyupListener = this.keyupListener.bind(this);
 		window.addEventListener('keydown', this.keydownListener);

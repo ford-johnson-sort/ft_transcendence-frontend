@@ -1,13 +1,7 @@
 import PongManager from './PongManager.js'
-import { GAME_MODE } from '../../constants/constants.js';
 import { KeyboardController } from './controller/KeyboardController.js';
+import { GAME_MODE, MATCH_TYPE } from '../../constants/constants.js';
 
-
-const SEX_MODE = Object.freeze({
-	PUSH: "huh"
-	INSERT: 'ang',
-	READY: 'READY',
-})
 
 /**
 	WAIT = 대기중 접속 후 무조건 뜨는 상태
@@ -45,7 +39,7 @@ export class PongGameLogic {
 		this.speedZ = 1.8;
 		let [user1, user2] = [null, null];
 
-		if([GAME_MODE.ONE_ON_ONE, GAME_MODE.TOURNAMENT].some(_mode => _mode === mode)) {
+		if([MATCH_TYPE.ONE_ON_ONE, MATCH_TYPE.TOURNAMENT].some(_mode => _mode === mode)) {
 			[user1, user2] = PongManager.getUser();
 			console.log(user1, user2);
 		}
@@ -127,7 +121,7 @@ export class PongGameLogic {
 		클리언트에서 -> 서버로 주는거 KEY_PRESS OFF 값인데
 	*/
 	async #update(delta) {
-		console.count('udpate call');
+
 		// 컨트롤러값으로 기체 움직임 적용
 		let player1Moved = false;
 		if (this.player1.controller.left == true) {
@@ -144,10 +138,6 @@ export class PongGameLogic {
 		if (this.player2.controller.right == true) {
 			this.player2.position.x += 1.5 * delta;
 		}
-		if (Math.abs(this.player1.controller.stick.x) > 0.05 && player1Moved == false) {
-			this.player1.position.x += 1.5 * this.player1.controller.stick.x * delta;
-		}
-
 		// 기체 움직임 범위 제한
 		this.player1.position.x = Math.max(
 			-this.fieldWidth / 2 + this.paddleWidth / 2,

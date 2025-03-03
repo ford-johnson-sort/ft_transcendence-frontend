@@ -1,37 +1,13 @@
 import { Controller } from "./controller/Controller.js";
 import { PongGameRenderer } from "./PongGameRenderer.js";
 import PongManager from "./PongManager.js";
+import { MOVEMENT, GAME_MODE } from "../../constants/constants.js";
 
-const MOVEMENT = Object.freeze({
-	LEFT_START:"LEFT_START",
-	RIGHT_START:"RIGHT_START",
-	LEFT_END:"LEFT_END",
-	RIGHT_END:"RIGHT_END",
-	KEYUP: {
-		37: "LEFT_END",
-		39: "RIGHT_END"
-	},
-	KEYDOWN: {
-		37: "LEFT_START",
-		39: "RIGHT_START"
-	}
-
-});
-
-
-/*
-	왜 전체 로직을 긁어 왔냐
-	사실 저기 및에 있는 데이터만 잘돌아가면 REenderer가 잘 돌아감
-	그니까 문제는 데이터를 어떻게 주고 받을 것인가 이거임
-	그래서 이거를 가지고 렌더러를 만들어야함
-	RemoteKeyBoardController를 만들어서 이거를 가지고
-	서버에 넘겨줄 데이터를 만들어야함
-	이미 들어올떄 REMOTE로 들어오는거니까
-*/
 
 export class PongGameRemoteLogic {
 	constructor(controller1, controller2) {
 		const {roomID: UUID, username} = PongManager.getState();
+		// socket connection
 		this.socket = new WebSocket(`wss://${window.location.host}/game/ws/pong/${UUID}/${username}`);
 		this.socket.onmessage = (event)=> {
 			console.log(event);
@@ -60,82 +36,80 @@ export class PongGameRemoteLogic {
 			position: { x: 0, y: 0, z: 0 },
 			velocity: { x: 0, y: 0, z: 0 },
 		};
-		// 이거 3개 필요하고
 		this.isPlayer1Strike = false;
 		this.isPlayer2Strike = false;
 		this.isWallStrike = false;
-		//
 		this.loop = this.loop.bind(this);
 		this.targetScore = 1;
-		// 도달하면
 		this.pauseDuration = 1500;
 		this.startTime = null;
 		this.endTime = null;
 		this.isHost = false;
 		this.isGuest = false;
 		this.channel = null;
-		// 이 isEnd  {isdend, winner} -> game종료시 받아오기
 		this.isEnd = false;
 		this.winner = null;
-
 		this.sendCount = 0;
 		// 프레임 계산용 delta
 		this.delta = 1000.0 / 60.0;
 	}
 
-
 	onEvent(event){
-		if (['READY', 'WAIT', 'END_GAME', 'END_ROUND'].some(metaMode=> metaMode === event.type)) {
+		if (GAME_MODE.META_EVENTS.some(mode=> mode === event.type)) {
 			return this.onGameMetaMessage(event);
 		}
 		return this.onGameMessage(event);
 	}
 
-
 	onGameMetaMessage({type, data}){
 		switch(type){
-			case 'END_GAME':
+			case GAME_MODE.END_GAME:
 				PongManager.notify({type, data});
 				this.isEnd = true;
 				this.socket.close();
+				this.controller1.setUpdater(()=>{}); // controller1의 updater를 빈 함수로 설정
 				break;
-			case "READY":
+			case GAME_MODE.READY:
 				this.player2.userName = data.opponent;
 				this.player1.userName = data.username;
 				break;
-			case "WAIT":
+			case GAME_MODE.WAIT:
 				PongManager.notify({type, data});
-				break;  asd
-			case "END_ROUND": {
+				break;
+			case GAME_MODE.END_ROUND: {
 				this.gameReset(); // 게임 리셋
 				break;
 			}
 		}
 	}
 
-	onGameMessage({type, data}){
-		switch(type){
-			case "MOVE_PADDLE":
+	onGameMessage({type, data}) {
+		switch(type) {
+			case GAME_MODE.MOVE_PADDLE:
 				this.player2Update(data);
 				break;
-			case "MOVE_BALL":
+			case GAME_MODE.MOVE_BALL:
 				this.ballUpdate(data);
 				break;
 		}
 	}
 
-	player2Update({movement, position}) {
-		if (movement === MOVEMENT.LEFT_START) {
-			this.player2.controller.left = movement === MOVEMENT.LEFT_START;
-		}
-		if (movement === MOVEMENT.RIGHT_START) {
-			this.player2.controller.right = movement === MOVEMENT.RIGHT_START;
-		}
-		if (movement === MOVEMENT.LEFT_END) {
-			this.player2.controller.left = movement === MOVEMENT.LEFT_END;
-		}
-		if (movement === MOVEMENT.RIGHT_END) {
-			this.player2.controller.right = movement === MOVEMENT.RIGHT_END;
+	player2Update({ movement, position }) {
+		switch (movement) {
+			case MOVEMENT.LEFT_START:
+				this.player2.controller.left = true;
+				break;
+			case MOVEMENT.LEFT_END:
+				this.player2.controller.left = false;
+				break;
+			case MOVEMENT.RIGHT_START:
+				this.player2.controller.right = true;
+				break;
+			case MOVEMENT.RIGHT_END:
+				this.player2.controller.right = false;
+				break;
+			default:
+				break;
 		}
 		this.player2.position.x = position;
 	}
@@ -147,17 +121,17 @@ export class PongGameRemoteLogic {
 	}
 
 	/**
-	 *
 	 * @param {"KEYUP" | "KEYDOWN"} type
 	 * @param {number} keycode
 	 */
+
 	sendMove(type, keycode) {
-		const movement = MOVEMENT[type]?.[keycode];
+		const movement = MOVEMENT[type][keycode];
 		if (!movement) return ;
 
 		this.socket.send(
 			JSON.stringify({
-				type: "MOVE_PADDLE",
+				type: GAME_MODE.MOVE_PADDLE,
 				data: { movement }
 			}
 		));
@@ -175,7 +149,6 @@ export class PongGameRemoteLogic {
 	}
 
 	update = async (delta) => {
-		console.count('udpate call');
 		// 컨트롤러값으로 기체 움직임 적용
 		let player1Moved = false;
 		if (this.player1.controller.left == true) {
@@ -227,53 +200,44 @@ export class PongGameRemoteLogic {
 				this.ball.velocity.x = (this.ball.position.x - this.player1.position.x) / ((this.paddleWidth / 2) + 0.1) * this.speedZ;
 				this.isPlayer1Strike = true;
 			} else { // 실점 판정
-			if (!this.isGuest){
-				this.player2.score++;
-				if (this.player1.scoreQuery) {
-					if (this.isGuest == false) {
-						this.player2.scoreQuery.innerHTML = this.player2.score;
+				if (!this.isGuest) {
+					this.player2.score++;
+					if (this.player1.scoreQuery) {
+						if (this.isGuest == false) {
+							this.player2.scoreQuery.innerHTML = this.player2.score;
+						}
 					}
-				}
-				this.ball.velocity.z = -this.speedZ;
-				this.ball.velocity.x = 0;
-				this.ball.position.x = 0;
-				this.ball.position.z = 0;
-				this.player1.position.x = 0;
-				this.player2.position.x = 0;
-				this.pauseDuration = 1500;
+					this.ball.velocity.z = -this.speedZ;
+					this.ball.velocity.x = 0;
+					this.ball.position.x = 0;
+					this.ball.position.z = 0;
+					this.player1.position.x = 0;
+					this.player2.position.x = 0;
+					this.pauseDuration = 1500;
 				}
 			}
 		} else if (this.ball.position.z <= -this.fieldDepth / 2) { // 라인을 넘었을 경우 : 2p
 			if (this.player2.position.x - (this.paddleWidth / 2) <= this.ball.position.x && // 공 반사
-			this.ball.position.x <= this.player2.position.x + (this.paddleWidth / 2)) {
+				this.ball.position.x <= this.player2.position.x + (this.paddleWidth / 2)) {
 				this.ball.position.z = -this.fieldDepth / 2;
-				this.ball.velocity.z *= -1;
-				this.ball.velocity.x = this.ball.velocity.x = (this.ball.position.x - this.player2.position.x) / ((this.paddleWidth / 2) + 0.1) * this.speedZ;
+				this.ball.velocity.z = -this.ball.velocity.z;
+				this.ball.velocity.x = (this.ball.position.x - this.player2.position.x)
+					/ ((this.paddleWidth / 2) + 0.1) * this.speedZ;
 				this.isPlayer2Strike = true;
 			} else { // 실점 판정
-			if (!this.isGuest){
 				this.player1.score++;
-				if (this.player1.scoreQuery) {
-					if (this.isGuest == false) {
-						this.player1.scoreQuery.innerHTML = this.player1.score;
-					}
-				}
-				this.ball.velocity.z = this.speedZ;
-				this.ball.velocity.x = 0;
-				this.ball.position.x = 0;
-				this.ball.position.z = 0;
+				this.ball.velocity = { x: 0, y : 0, z : 0 };
+				this.ball.position = { x: 0, y : 0, z : 0 };
 				this.player1.position.x = 0;
 				this.player2.position.x = 0;
 				this.pauseDuration = 1500;
-				}
 			}
 		}
-
 		// 공 속도 점점 빠르게
 		if (this.ball.velocity.z > 0) {
-		  this.ball.velocity.z += 0.001 * delta;
+			this.ball.velocity.z += 0.001 * delta;
 		} else if (this.ball.velocity.z < 0) {
-		  this.ball.velocity.z -= 0.001 * delta;
+			this.ball.velocity.z -= 0.001 * delta;
 		}
 	}
 
@@ -298,7 +262,5 @@ export class PongGameRemoteLogic {
 		} else {
 			setTimeout(this.loop, 0);
 		}
-
 	}
 }
-
