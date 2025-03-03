@@ -95,22 +95,22 @@ export class PongGameRemoteLogic {
 	}
 
 	player2Update({ movement, position }) {
-		switch (movement) {
-			case MOVEMENT.LEFT_START:
-				this.player2.controller.left = true;
-				break;
-			case MOVEMENT.LEFT_END:
-				this.player2.controller.left = false;
-				break;
-			case MOVEMENT.RIGHT_START:
-				this.player2.controller.right = true;
-				break;
-			case MOVEMENT.RIGHT_END:
-				this.player2.controller.right = false;
-				break;
-			default:
-				break;
-		}
+		// switch (movement) {
+		// 	case MOVEMENT.LEFT_START:
+		// 		this.player2.controller.left = true;
+		// 		break;
+		// 	case MOVEMENT.LEFT_END:
+		// 		this.player2.controller.left = false;
+		// 		break;
+		// 	case MOVEMENT.RIGHT_START:
+		// 		this.player2.controller.right = true;
+		// 		break;
+		// 	case MOVEMENT.RIGHT_END:
+		// 		this.player2.controller.right = false;
+		// 		break;
+		// 	default:
+		// 		break;
+		// }
 		this.player2.position.x = position;
 	}
 
