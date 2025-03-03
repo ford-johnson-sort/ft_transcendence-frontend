@@ -36,7 +36,7 @@ export class PongGameRemoteLogic {
 		this.socket.onmessage = (event)=> {
 			console.log(event);
 			const payload = JSON.parse(event.data);
-			this.#onEvent(payload);
+			this.onEvent(payload);
 			console.log(payload);
 		};
 		controller1.setUpdater(this.sendMove.bind(this));
@@ -84,15 +84,15 @@ export class PongGameRemoteLogic {
 	}
 
 
-	#onEvent(event){
+	onEvent(event){
 		if (['READY', 'WAIT', 'END_GAME', 'END_ROUND'].some(metaMode=> metaMode === event.type)) {
-			return this.#onGameMetaMessage(event);
+			return this.onGameMetaMessage(event);
 		}
-		return this.#onGameMessage(event);
+		return this.onGameMessage(event);
 	}
 
 
-	#onGameMetaMessage({type, data}){
+	onGameMetaMessage({type, data}){
 		switch(type){
 			case 'END_GAME':
 				PongManager.notify({type, data});
@@ -107,24 +107,24 @@ export class PongGameRemoteLogic {
 				PongManager.notify({type, data});
 				break;  asd
 			case "END_ROUND": {
-				this.#gameReset(); // 게임 리셋
+				this.gameReset(); // 게임 리셋
 				break;
 			}
 		}
 	}
 
-	#onGameMessage({type, data}){
+	onGameMessage({type, data}){
 		switch(type){
 			case "MOVE_PADDLE":
-				this.#player2Update(data);
+				this.player2Update(data);
 				break;
 			case "MOVE_BALL":
-				this.#ballUpdate(data);
+				this.ballUpdate(data);
 				break;
 		}
 	}
 
-	#player2Update({movement, position}) {
+	player2Update({movement, position}) {
 		if (movement === MOVEMENT.LEFT_START) {
 			this.player2.controller.left = movement === MOVEMENT.LEFT_START;
 		}
@@ -140,7 +140,7 @@ export class PongGameRemoteLogic {
 		this.player2.position.x = position;
 	}
 
-	#ballUpdate({velocity, position}) {
+	ballUpdate({velocity, position}) {
 		this.ball.velocity = velocity;
 		this.ball.position = position;
 		console.log("ballUpdate", this.ball);
@@ -164,7 +164,7 @@ export class PongGameRemoteLogic {
 	}
 
 
-	#gameReset() {
+	gameReset() {
 		this.ball.velocity.z = 0;
 		this.ball.velocity.x = 0;
 		this.ball.position.x = 0;
