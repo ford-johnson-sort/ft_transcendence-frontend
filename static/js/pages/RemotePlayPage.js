@@ -57,7 +57,7 @@ export default class RemotePlayPong extends Component {
 
     setTimeout(async ()=>{
       try{
-        // await this.prepare();
+        await this.prepare();
         this.preparePong();
       } catch(e){
 
