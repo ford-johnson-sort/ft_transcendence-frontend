@@ -28,11 +28,14 @@ export default class PongGamePage extends Component {
     this.children = [
       {
         id: 'PongGameContainer',
-        type: GameContainers[matchType]
+        type: GameContainers[matchType],
       },
       {
         id: 'PongManagerView',
-        type: PongManagerView
+        type: PongManagerView,
+        props: {
+          matchType
+        }
       }
     ]
   }
@@ -47,10 +50,17 @@ export default class PongGamePage extends Component {
   setEvent() {}
 
   componentDidMount() {
-    PongManager.subscribe(({type})=>{
+    this.unSubscribe = PongManager.subscribe(({type})=>{
       if(type === GAME_MODE.END_GAME){
-        Router.push('/main');
+        if (this.$props.params.matchType === MATCH_TYPE.TOURNAMENT){
+          return;
+        }
+        Router.push('/main'); // TODO: WILL BE DELETE 
       }
     })
+  }
+
+  componentWillUnmount(){
+    this.unSubscribe();
   }
 }

@@ -3,7 +3,7 @@ import Component from "../common/Component.js";
 import { PongGame } from "./game/PongGame.js";
 import PongManager from "./game/PongManager.js";
 import { KeyboardController } from "./game/controller/KeyboardController.js"
-import { MATCH_TYPE } from "../constants/constants.js";
+import { GAME_MODE, MATCH_TYPE } from "../constants/constants.js";
 import Tournament from "../utils/tournament.js";
 import { Router } from "../common/Router.js";
 import PongManagerView from "../ui/PongManagerView.js";
@@ -12,49 +12,44 @@ const TOURNAMENT = Object.freeze({
   USER_SIZE: 4
 });
 
-
 export default class PongTournamentContainer extends Component {
   setup() {
-    CSSLaoder.load("PongPage");
-    const players = JSON.parse(localStorage.getItem('playerNames') ?? '[]');
-    PongManager.setUser([...players]);
+    
+    const players = PongManager.getPlayers();
     if (players.length != TOURNAMENT.USER_SIZE) {
-      alert("유저 섹스");
-      Router.push("/main");
+      return Router.push("/main");
     }
+    debugger;
+
     this.tournament = new Tournament(players);
+    PongManager.resetPlayers();
     const {value, done} = this.tournament.next();
 
     this.setState({
       currentMatch: value,
+      round: 1,
       isEnd: done ?? true,
     })
     
   }
 
     template() {
-    return `
-    <div data-component="PongManager"></div>
-    <div id="pong-game-container">
-        <div id="pongCanvas"></div>
-    </div>
-    `;
-  }
-
-  setEvent() {
-
+      return `
+        <div id="pong-game-container">
+          <div id="pongCanvas"></div>
+        </div>
+      `;
   }
 
   componentDidMount() {
     PongManager.subscribe(({ type, data })=> {
-      if (type == "GAME_END") {
-        console.log(data);
+      if (type == GAME_MODE.END_GAME) {
         this.tournament.addResult(data.winner);
         const next = this.tournament.next();
-        if (next.done) {
-          return ;
+        if (next.done) { 
+          return ; 
         }
-        this.setState({ currentMatch: next.value, isEnd: next.done });
+        this.setState({ currentMatch: next.value, isEnd: next.done, round: this.$state.round +1 });
       }}
     );
   }
@@ -62,10 +57,12 @@ export default class PongTournamentContainer extends Component {
   componentDidUpdate() {
     console.log(this.$state);
     if (!this.$state.isEnd) {
-      // PongManager.setState({
-        // matchType: 
-      // })
-      // PongManager.
+      PongManager.setState({
+        matchType: MATCH_TYPE.TOURNAMENT,
+        players: this.$state.currentMatch,
+        round: this.$state.round
+      })
+      this.startPongGame();
     }
   }
 

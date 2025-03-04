@@ -16,14 +16,6 @@ export default class PongManager {
 	  }
 	}
 
-	static getUser() {
-		return PongManager._user;
-	}
-
-	static setUser(users) {
-		PongManager._user = users;
-	}
-
 	/**
 	 * 
 	 * @param {{
@@ -40,11 +32,14 @@ export default class PongManager {
 	}
 
 
-
-	static getState({ matchType }) {
-		//-> {matchType:string}
+	static getState({matchType}) {	
 		return PongManager._state[matchType];
 	}
+
+	static stateClear(){
+		PongManager._state = {};
+	}
+
 
 	/**
 	 * 

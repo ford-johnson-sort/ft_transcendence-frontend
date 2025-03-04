@@ -1,4 +1,5 @@
 import Component from "../common/Component.js";
+import { Router } from "../common/Router.js";
 import { MATCH_TYPE } from "../constants/constants.js";
 export const MATCH_FORM_SELECTOR = ".match-form";
 
@@ -136,7 +137,7 @@ export class MatchFunnel extends Component {
   }
 
   startGame({matchType}) {
-    window.location.href = `/pong/${matchType}`;
+    Router.push(`/pong/${matchType}`);
   }
 
   componentWillMount(){

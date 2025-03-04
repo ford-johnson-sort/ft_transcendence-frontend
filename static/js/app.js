@@ -4,6 +4,7 @@ import NotFoundPage from './pages/NotFound.js';
 import MainPage from './pages/MainPage.js';
 import HomePage from './pages/HomePage.js'
 import AuthCallback from './pages/AuthCallback.js'
+
 import PongGamePage from './pages/PongGamePage.js';
 
 

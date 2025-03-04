@@ -37,3 +37,8 @@ div[data-component="PongManager"][class] .vibration {
     transform: rotate(0deg);
   }
 }
+
+.message-container .message {
+  white-space: break-spaces;
+  font-size: 4rem;
+}

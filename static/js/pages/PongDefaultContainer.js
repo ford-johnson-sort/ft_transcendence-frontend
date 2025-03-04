@@ -11,6 +11,7 @@ import { Router } from '../common/Router.js';
  */
 export default class PongDefaultContainer extends Component {
   setup() {
+    console.log(this.$props);
     const players = PongManager.getPlayers();
     if (players.length != 2) {
       PongManager.resetPlayers();
