@@ -6,7 +6,8 @@ import { MATH_FUNNEL_COMPONENT, MatchFunnel } from "../ui/MatchFunnel.js";
 async function getUser() {
   const cookie = await cookieStore.get(LOGIN_COOKIE);
   if (!cookie) return null;
-  return atob(cookie.value);
+  const toc = atob(cookie.value);
+  return (toc?.username ?? null);
 }
 
 
