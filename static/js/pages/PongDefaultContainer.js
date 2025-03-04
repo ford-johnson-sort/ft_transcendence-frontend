@@ -44,15 +44,14 @@ export default class PongDefaultContainer extends Component {
       matchType: MATCH_TYPE.ONE_ON_ONE,
       players: this.$state.players
     })
-    this.initPongGame().then(()=>{
+    this.initPongGame();
     PongManager.notify({
       type: 'WAIT',
       data: {
-        onClick: this.pongGame.start,
-        },
+        onClick: ()=>this.pongGame.start(),
         message: "게임 스타트"
-        })
-      });
+      },
+    })
     }
     
 
