@@ -50,17 +50,10 @@ export default class PongGamePage extends Component {
   setEvent() {}
 
   componentDidMount() {
-    this.unSubscribe = PongManager.subscribe(({type})=>{
-      if(type === GAME_MODE.END_GAME){
-        if (this.$props.params.matchType === MATCH_TYPE.TOURNAMENT){
-          return;
-        }
-        Router.push('/main'); // TODO: WILL BE DELETE 
-      }
-    })
+
   }
 
   componentWillUnmount(){
-    this.unSubscribe();
+
   }
 }

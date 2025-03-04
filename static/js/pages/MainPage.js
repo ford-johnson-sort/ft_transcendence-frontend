@@ -35,7 +35,7 @@ export default class MainPage extends Component {
             </div>
             <a href='/pong'>go pong</a>
           </div>
-        </div>
+        </div> 
         <div data-component="matchFunnel" id='matchButtonContainer'></div>
       </div>
     `;

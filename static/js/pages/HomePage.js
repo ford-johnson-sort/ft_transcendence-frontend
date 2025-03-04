@@ -3,7 +3,7 @@ import CSSLaoder from "../common/CSSLoader.js"
 
 export default class HomePage extends Component {
   setup() {
-    CSSLaoder.load('loginPage');
+    CSSLaoder.load('homePage');
   }
 
   template() {

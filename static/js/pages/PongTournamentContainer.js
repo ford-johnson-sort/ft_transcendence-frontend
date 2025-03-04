@@ -19,7 +19,6 @@ export default class PongTournamentContainer extends Component {
     if (players.length != TOURNAMENT.USER_SIZE) {
       return Router.push("/main");
     }
-    debugger;
 
     this.tournament = new Tournament(players);
     PongManager.resetPlayers();
@@ -42,7 +41,7 @@ export default class PongTournamentContainer extends Component {
   }
 
   componentDidMount() {
-    PongManager.subscribe(({ type, data })=> {
+    this.unsub = PongManager.subscribe(({ type, data })=> {
       if (type == GAME_MODE.END_GAME) {
         this.tournament.addResult(data.winner);
         const next = this.tournament.next();
@@ -50,31 +49,51 @@ export default class PongTournamentContainer extends Component {
           return ; 
         }
         this.setState({ currentMatch: next.value, isEnd: next.done, round: this.$state.round +1 });
+        setTimeout(()=>{
+          PongManager.notify({
+            type: GAME_MODE.WAIT,
+            data:{
+              start:()=> this.pongGame.start(),
+              message: `ROUND ${this.$state.round} match ${this.$state.currentMatch.join(' vs ')}`
+            }
+          });
+        }, 2000);
+        
       }}
     );
   }
 
   componentDidUpdate() {
-    console.log(this.$state);
     if (!this.$state.isEnd) {
       PongManager.setState({
         matchType: MATCH_TYPE.TOURNAMENT,
         players: this.$state.currentMatch,
         round: this.$state.round
       })
-      this.startPongGame();
+      if(!this.pongGame){
+        this.preparePong();
+        PongManager.notify({
+            type: GAME_MODE.WAIT,
+            data:{
+              start:()=> this.pongGame.start(),
+              message: `ROUND ${this.$state.round} match ${this.$state.currentMatch.join(' vs ')}`
+            }
+        });
+      }
+      this.preparePong();
     }
   }
 
-  async startPongGame() {
+  async preparePong() {
     this.pongGame = new PongGame();
     const key1 = new KeyboardController(37, 39);
     const key2 = new KeyboardController(65, 68);
     await this.pongGame.init(key1, key2, "pong-game-container", MATCH_TYPE.TOURNAMENT);
-    this.pongGame.start();
+    // this.pongGame.start();
   }
 
   componentWillUnmount() {
     this.pongGame.destroy();
+    this.unsub();
   }
 }
