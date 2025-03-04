@@ -171,7 +171,7 @@ export class PongGameRenderer {
 	}
 
 	playerNameTextureLoad = (name, id, playerUnit) => {
-		this.fontLoader.load("https://threejs.org/examples/fonts/helvetiker_regular.typeface.json", (font) => {
+		this.fontLoader.load("/static/assets/font/NanumHuman TTF Regular_Regular.json", (font) => {
 			const textGeometry = new TextGeometry(name, {
 				// 텍스트 뚫어야함
 				font: font,
