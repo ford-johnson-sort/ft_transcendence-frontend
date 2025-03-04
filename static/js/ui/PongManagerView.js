@@ -7,8 +7,8 @@ export default class PongManagerView extends Component {
   setup(){
     this.unsubscribe = PongManager.subscribe(({type, data = {}})=>{
       console.log(type, data);
-      if (type === GAME_MODE.WAIT && data.onClick){
-        this.setState({type, onClick: data.onClick, message: data.message});
+      if (type === GAME_MODE.WAIT && data?.onClick){
+        this.setState({type, onClick: data?.onClick , message: data.message});
       }
       console.log(type);
     })
