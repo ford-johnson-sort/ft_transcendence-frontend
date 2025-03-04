@@ -23,6 +23,7 @@ export class PongGame {
 		this.renderer = new PongGameRenderer(); // PongGameRenderer는 PongGameLogic을 받아서 그려주는 역할
 		await this.renderer.init(divID, this.logic);
 	}
+	
 	async start() {
 		await this.renderer.loop();
 		this.logic.loop();

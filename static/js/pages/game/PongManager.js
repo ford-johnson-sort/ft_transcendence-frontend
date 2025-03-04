@@ -1,4 +1,5 @@
-export default class PongManager {''
+import { PLAYER_NAMES, MATCH_TYPE } from "../../constants/constants.js";
+export default class PongManager {
 	static _subscriber = new Set();
 	static _state = {};
 
@@ -23,14 +24,39 @@ export default class PongManager {''
 		PongManager._user = users;
 	}
 
+	/**
+	 * 
+	 * @param {{
+	 * matchType: keyof MATCH_TYPE,
+	 * [K: string]: any,
+	 * }} state 
+	 */
 	static setState(state) {
-		PongManager._state = {...PongManager._state, ...state};
+		const { matchType, ...other } = state;
+		PongManager._state = {
+			...PongManager._state, 
+			[matchType]: {...PongManager._state[matchType], ...other}
+		};
 	}
 
-	static getState(){
-		return PongManager._state;
+
+
+	static getState({ matchType }) {
+		//-> {matchType:string}
+		return PongManager._state[matchType];
 	}
 
+	/**
+	 * 
+	 * @returns {Array<string>}
+	 */
+	static getPlayers() {
+		return JSON.parse(localStorage.getItem(PLAYER_NAMES) ?? "[]");
+	}
+
+	static resetPlayers(){
+		localStorage.removeItem(PLAYER_NAMES);
+	}
 }
 
 /*

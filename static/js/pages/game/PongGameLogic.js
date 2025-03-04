@@ -32,15 +32,19 @@ import { GAME_MODE, MATCH_TYPE } from '../../constants/constants.js';
 
 */
 export class PongGameLogic {
-	constructor(controller1, controller2, mode) {
+	constructor(controller1, controller2, matchType) {
 		this.fieldWidth = 120;
 		this.fieldDepth = 170;
 		this.paddleWidth = 18;
 		this.speedZ = 1.8;
 		let [user1, user2] = [null, null];
 
-		if([MATCH_TYPE.ONE_ON_ONE, MATCH_TYPE.TOURNAMENT].some(_mode => _mode === mode)) {
-			[user1, user2] = PongManager.getUser();
+		if ([MATCH_TYPE.ONE_ON_ONE, MATCH_TYPE.TOURNAMENT].some(_mode => _mode === matchType)) {
+			const { players } = PongManager.getState({matchType});
+			if (players.length !== 2) {
+				throw Error("[CRITICAL ERROR]");
+			}
+			[user1, user2] = players;
 			console.log(user1, user2);
 		}
 
@@ -103,12 +107,12 @@ export class PongGameLogic {
 				this.winner = this.player2.userName;
 			}
 
-			return PongManager.notify({type: 'GAME_END', data:{winner: this.winner}});
+			return PongManager.notify({type: GAME_MODE.END_GAME, data:{winner: this.winner}});
 		}
 		this.endTime = performance.now();
 		let gapTime = this.startTime - this.endTime;
 		if (this.isEnd) {
-			return PongManager.notify({winner: this.winner});
+			return PongManager.notify({type: GAME_MODE.END_GAME, data:{ winner: this.winner}});
 		}
 		if (gapTime < (1000.0 / 60.0)) {
 			setTimeout(this.loop, (1000.0 / 60.0) - gapTime);

@@ -1,4 +1,4 @@
-
+import { ResponseError } from "../constants/error.js";
 
 export const AuthAPi = {
 	refresh(){
@@ -27,6 +27,10 @@ export const AuthAPi = {
 export const GameApi = {
 	async match() {
 		const response = await fetch('/game/pong/new', {method: 'POST'});
+		if(!response.ok){
+			throw new ResponseError(response.status, response.statusText); // 405 -> method not Allow // 401 // 
+		}
 		return response.json();
 	}
 }
+

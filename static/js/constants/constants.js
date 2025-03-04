@@ -7,6 +7,7 @@ export const MATCH_TYPE = Object.freeze({
   TOURNAMENT: 'tournament'
 });
 
+export const PLAYER_NAMES = 'playerNames';
 
 export const MOVEMENT = Object.freeze({
 	LEFT_START: "LEFT_START",

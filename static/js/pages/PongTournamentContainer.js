@@ -6,13 +6,14 @@ import { KeyboardController } from "./game/controller/KeyboardController.js"
 import { MATCH_TYPE } from "../constants/constants.js";
 import Tournament from "../utils/tournament.js";
 import { Router } from "../common/Router.js";
+import PongManagerView from "../ui/PongManagerView.js";
 
 const TOURNAMENT = Object.freeze({
   USER_SIZE: 4
 });
 
 
-export default class PongTounament extends Component {
+export default class PongTournamentContainer extends Component {
   setup() {
     CSSLaoder.load("PongPage");
     const players = JSON.parse(localStorage.getItem('playerNames') ?? '[]');
@@ -47,7 +48,6 @@ export default class PongTounament extends Component {
   componentDidMount() {
     PongManager.subscribe(({ type, data })=> {
       if (type == "GAME_END") {
-        console.log('sex');
         console.log(data);
         this.tournament.addResult(data.winner);
         const next = this.tournament.next();
@@ -63,15 +63,17 @@ export default class PongTounament extends Component {
   componentDidUpdate() {
     console.log(this.$state);
     if (!this.$state.isEnd) {
-      PongManager.setUser([...this.$state.currentMatch]);
-      this.startPongGame();
+      // PongManager.setState({
+        // matchType: 
+      // })
+      // PongManager.
     }
   }
 
   async startPongGame() {
     const pongGame = new PongGame();
-    const key1 = new KeyboardController(37, 39, 38, 40, 32);
-    const key2 = new KeyboardController(65, 68, 87, 83, 70);
+    const key1 = new KeyboardController(37, 39);
+    const key2 = new KeyboardController(65, 68);
     await pongGame.init(key1, key2, "pong-game-container", MATCH_TYPE.TOURNAMENT);
     pongGame.start();
   }

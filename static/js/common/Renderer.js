@@ -357,18 +357,20 @@ export default class Renderer {
           // 디버깅을 위한 로그
 
           // Router 컴포넌트의 특별 처리 (무한 업데이트 방지)
-          if (component.constructor.name === 'Router') {
-            const lastRouterUpdateTime = component._lastUpdateTime || 0;
-            const now = Date.now();
+          // FIXME
+          // if (component.constructor.name === 'Router') {
+          //   const lastRouterUpdateTime = component._lastUpdateTime || 0;
+          //   const now = Date.now();
 
-            // 너무 빈번한 라우터 업데이트 방지 (최소 100ms 간격)
-            if (now - lastRouterUpdateTime < 100) {
-              console.warn('Router update throttled (too frequent updates)');
-              continue;
-            }
+          //   // 너무 빈번한 라우터 업데이트 방지 (최소 100ms 간격)
+          //   console.count('Router', component);
+          //   if (now - lastRouterUpdateTime < 1) {
+          //     console.warn('Router update throttled (too frequent updates)');
+          //     continue;
+          //   }
 
-            component._lastUpdateTime = now;
-          }
+          //   component._lastUpdateTime = now;
+          // }
 
           // componentWillUpdate 호출
           try {
