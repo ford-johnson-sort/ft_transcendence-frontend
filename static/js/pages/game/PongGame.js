@@ -4,11 +4,7 @@ import { PongGameRemoteLogic } from "./PongGameRemoteLogic.js";
 import { MATCH_TYPE } from "../../constants/constants.js";
 
 export class PongGame {
-	constructor() {
-		window.addEventListener('popstate', (e) => {
-			this.destroy();
-		});
-	}
+	constructor() {}
 
 	async init(controller1, controller2, divID, mode){
 		this.controller1 = controller1;
@@ -23,7 +19,7 @@ export class PongGame {
 		this.renderer = new PongGameRenderer(); // PongGameRenderer는 PongGameLogic을 받아서 그려주는 역할
 		await this.renderer.init(divID, this.logic);
 	}
-	
+
 	async start() {
 		await this.renderer.loop();
 		this.logic.loop();

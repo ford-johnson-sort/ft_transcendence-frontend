@@ -24,67 +24,24 @@ export class PongGameRenderer {
 		this.scene = new THREE.Scene();
 		this.preLoader = Preload;
 		this.rgbeLoader = Preload.RGBELoader;
-
 		// 카메라 세팅
 		this.camera = Preload.camera;
 		this.rotationCenter = new THREE.Object3D();
 		this.rotationCenter.add(this.camera);
 		this.scene.add(this.rotationCenter);
-
 		// 렌더러
 		this.renderer = Preload.renderer;
 		document.getElementById(divID).appendChild(this.renderer.domElement);
-
 		// 포스트 프로세싱
 		this.pmremGenerator = Preload.pmremGenerator;
-
-		// 오디오 로더, 리스너
-		this.audioLoader = new THREE.AudioLoader();
-		this.audioListener = new THREE.AudioListener();
-		this.camera.add(this.audioListener);
 		// Font 로더
 		this.fontLoader = new FontLoader();
-		this.bgmSound = new THREE.Audio(this.audioListener);
-		// audioLoader.load("static/assets/sound/Moonlight.mp3", (buffer) => {
-		this.audioLoader.load("/static/assets/sound/Youre just a chill guy listening to chill music.mp3", (buffer) => {
-		this.bgmSound.setBuffer(buffer);
-		this.bgmSound.setLoop(true);
-		this.bgmSound.setVolume(0);
-		// TODO: 개발시에 틀지 말것 끄기 귀찮음
-		// this.bgmSound.play();
-		function fadeInAudio(audio, duration) {
-			const initialVolume = 0.0;
-			const targetVolume = 0.3;
-			const step = (targetVolume - initialVolume) / (duration / 100);
-			let currentVolume = initialVolume;
-			function increaseVolume() {
-				currentVolume = Math.min(currentVolume + step, targetVolume);
-				audio.setVolume(currentVolume);
-				if (currentVolume < targetVolume) {
-					setTimeout(increaseVolume, 100);
-				}
-			}
-			increaseVolume();
-		}
-		// TODO: 100 이상 하지 말것
-		fadeInAudio(this.bgmSound, 100);
-	});
-
-	this.strikeSound = new THREE.Audio(this.audioListener);
-	this.audioLoader.load("/static/assets/sound/Ping Pong Ball Hit.mp3", (buffer) => {
-		this.strikeSound.setBuffer(buffer);
-		this.strikeSound.setLoop(false);
-		this.strikeSound.setVolume(0.2);
-	});
-
-	// 조명 추가
-	this.ambientLight = new THREE.DirectionalLight(0xffffff, 2);
-
-	this.scene.add(this.ambientLight);
-
-	// 공
-	const ballGeometry = new THREE.SphereGeometry(2, 16, 16);
-	const ballMaterial = new THREE.MeshStandardMaterial({
+		// 조명 추가
+		this.ambientLight = new THREE.DirectionalLight(0xffffff, 2);
+		this.scene.add(this.ambientLight);
+		// 공
+		const ballGeometry = new THREE.SphereGeometry(2, 16, 16);
+		const ballMaterial = new THREE.MeshStandardMaterial({
 		color: 0xffffff,
 		roughness: 0,
 		metalness: 1,
@@ -101,12 +58,9 @@ export class PongGameRenderer {
 	this.animate = this.animate.bind(this);
 	this.resizeListener = this.resizeListener.bind(this);
 	window.addEventListener('resize', this.resizeListener);
-
 	this.clock = new THREE.Clock();
 	this.setTopView();
 	}
-
-
 
 	resizeListener() {
 		this.camera.aspect = window.innerWidth / window.innerHeight;
@@ -251,24 +205,6 @@ export class PongGameRenderer {
 		this.camera.lookAt(new THREE.Vector3(0, 0, 0));
 	}
 
-	// tiltZ(object, targetRotationZ) {
-	// 	if (targetRotationZ == object.rotation.z) {
-	// 		return ;
-	// 	} else {
-	// 		if (targetRotationZ > object.rotation.z) {
-	// 			object.rotation.z += 0.04;
-	// 			if (object.rotation.z > targetRotationZ) {
-	// 				object.rotation.z = targetRotationZ;
-	// 			}
-	// 		} else if (targetRotationZ < object.rotation.z) {
-	// 			object.rotation.z -= 0.04;
-	// 			if (object.rotation.z < targetRotationZ) {
-	// 				object.rotation.z = targetRotationZ
-	// 			}
-	// 		}
-	// 	}
-	// }
-
 	shakeCamera(camera, duration = 100, intensity = 0.05) {
 		const startTime = Date.now();
 		const originalPosition = camera.position.clone();
@@ -358,15 +294,6 @@ export class PongGameRenderer {
 		window.removeEventListener('resize', this.resizeListener);
 	}
 
-	disposeAudio() {
-		if (this.bgmSound && this.bgmSound.isPlaying) {
-			this.bgmSound.stop();
-		}
-		if (this.strikeSound && this.strikeSound.isPlaying) {
-			this.strikeSound.stop();
-		}
-	}
-
 	disposeScene() {
 		while (this.scene.children.length > 0) {
 			const object = this.scene.children[0];
@@ -399,7 +326,7 @@ export class PongGameRenderer {
 		this.isDisposed = true;
 		this.disposeScene();
 		this.removeEventListeners();
-		this.disposeAudio();
+		// this.disposeAudio();
 
 		if (this.renderer) {
 			this.renderer.dispose();
