@@ -236,26 +236,14 @@ export class PongGameRenderer {
 		// 충동시 화면 흔들림, 충격음
 		if (this.pongGameLogicInstance.isWallStrike == true) {
 			this.shakeCamera(this.camera, 200 ,4);
-			if (this.strikeSound.isPlaying) {
-				this.strikeSound.stop();
-			}
-			this.strikeSound.play();
 			this.pongGameLogicInstance.isWallStrike = false;
 		}
 		if (this.pongGameLogicInstance.isPlayer1Strike == true) {
 			this.shakeCamera(this.camera, 500, 4);
-			if (this.strikeSound.isPlaying) {
-				this.strikeSound.stop();
-			}
-			this.strikeSound.play();
 			this.pongGameLogicInstance.isPlayer1Strike = false;
 		}
 		if (this.pongGameLogicInstance.isPlayer2Strike == true) {
 			this.shakeCamera(this.camera, 300, 4);
-			if (this.strikeSound.isPlaying) {
-				this.strikeSound.stop();
-			}
-			this.strikeSound.stop();
 			this.pongGameLogicInstance.isPlayer2Strike = false;
 		}
 
