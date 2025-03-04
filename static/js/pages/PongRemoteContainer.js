@@ -48,10 +48,9 @@ export default class PongRemoteContainer extends Component {
           }, 3000);
           return ;
         }
-        console.log(error);
+
       }
     }, 0);
-    console.log('mounted', this);
   }
 
   async preparePong(){
@@ -62,7 +61,7 @@ export default class PongRemoteContainer extends Component {
   }
 
   componentWillUnmount(){
-    console.log('unmount', this.className);
+
     this.pongGame.destroy();
   }
 }

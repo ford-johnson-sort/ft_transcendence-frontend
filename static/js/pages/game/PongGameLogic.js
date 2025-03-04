@@ -41,23 +41,21 @@ export class PongGameLogic {
 
 		if ([MATCH_TYPE.ONE_ON_ONE, MATCH_TYPE.TOURNAMENT].some(_mode => _mode === matchType)) {
 			const { players } = PongManager.getState({matchType});
-			if (players.length !== 2) {
-				throw Error("[CRITICAL ERROR]");
+			if (players && players.length === 2) {
+				[user1, user2] = players;
 			}
-			[user1, user2] = players;
-			console.log(user1, user2);
 		}
 
 		this.player1 = {
 			position: { x: 0, y: 0, z: 80 },
 			score: 0,
-			userName: user1,
+			userName: user1 ?? 'player1',
 			controller: controller1
 		};
 		this.player2 = {
 			position: { x: 0, y: 0, z: -80 },
 			score: 0,
-			userName: user2,
+			userName: user2 ?? 'player2',
 			controller: controller2
 		};
 		this.ball = {

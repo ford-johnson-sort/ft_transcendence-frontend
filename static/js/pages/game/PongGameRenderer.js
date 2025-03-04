@@ -110,7 +110,6 @@ export class PongGameRenderer {
 	 * Player Model Default import
 	 */
 	async setPlayer1UnitDefault() {
-		console.log('I am called');
 		try {
 			const gltf = await this.loadGltfModel("/static/assets/glb/sabre.glb");
 			this.player1Unit = gltf.scene;

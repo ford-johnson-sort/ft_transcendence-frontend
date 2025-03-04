@@ -22,8 +22,6 @@ export default class PongGamePage extends Component {
   setup() {
     CSSLaoder.load('pongPage');
     const {matchType} = this.$props.params;
-    console.log(matchType);
-    console.log(GameContainers[matchType])
   
     this.children = [
       {

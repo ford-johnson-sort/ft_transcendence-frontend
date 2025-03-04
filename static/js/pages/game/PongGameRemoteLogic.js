@@ -10,10 +10,8 @@ export class PongGameRemoteLogic {
 		// socket connection
 		this.socket = new WebSocket(`wss://${window.location.host}/game/ws/pong/${UUID}/${username}`);
 		this.socket.onmessage = (event)=> {
-			console.log(event);
 			const payload = JSON.parse(event.data);
 			this.onEvent(payload);
-			console.log(payload);
 		};
 		controller1.setUpdater(this.sendMove.bind(this));
 		this.fieldWidth = 120;

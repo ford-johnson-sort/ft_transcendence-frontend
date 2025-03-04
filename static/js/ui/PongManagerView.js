@@ -20,7 +20,6 @@ function getournamentText(round, winner){
 export default class PongManagerView extends Component {
   setup(){
     this.unsubscribe = PongManager.subscribe(({type, data = {}})=>{
-      console.log(type, data);
       if (type === GAME_MODE.WAIT && data?.onClick){
         return this.setState({type, data:{ onClick: data?.onClick , message: data.message}});
       }
@@ -47,7 +46,6 @@ export default class PongManagerView extends Component {
 
 
   componentDidUpdate(){
-    console.log(this.$state);
     if(this.$state.type === GAME_MODE.WAIT && this.$state.data.onClick){
       const {onClick} = this.$state.data;
       this.$target.addEventListener('click', (e)=>{

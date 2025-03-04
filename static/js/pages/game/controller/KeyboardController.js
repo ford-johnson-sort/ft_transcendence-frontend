@@ -7,7 +7,7 @@ import { Controller } from "./Controller.js";
 export class KeyboardController extends Controller {
 	constructor(leftKeycode, rightKeycode) {
 		super();
-		this.updater = console.log;
+		this.updater = ()=>{};
 		this.leftKeycode = leftKeycode;
 		this.rightKeycode = rightKeycode;
 		this.keydownListener = this.keydownListener.bind(this);
