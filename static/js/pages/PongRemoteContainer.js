@@ -61,5 +61,8 @@ export default class PongRemoteContainer extends Component {
     this.pongGame.start();
   }
 
-  componentWillUnmount(){}
+  componentWillUnmount(){
+    console.log('unmount', this.className);
+    this.pongGame.destroy();
+  }
 }

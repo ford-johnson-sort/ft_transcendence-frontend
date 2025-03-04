@@ -67,14 +67,14 @@ export default class PongTournamentContainer extends Component {
   }
 
   async startPongGame() {
-    const pongGame = new PongGame();
+    this.pongGame = new PongGame();
     const key1 = new KeyboardController(37, 39);
     const key2 = new KeyboardController(65, 68);
-    await pongGame.init(key1, key2, "pong-game-container", MATCH_TYPE.TOURNAMENT);
-    pongGame.start();
+    await this.pongGame.init(key1, key2, "pong-game-container", MATCH_TYPE.TOURNAMENT);
+    this.pongGame.start();
   }
 
   componentWillUnmount() {
-    // this.unSubscribe();
+    this.pongGame.destroy();
   }
 }

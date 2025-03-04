@@ -44,21 +44,26 @@ export default class PongDefaultContainer extends Component {
       matchType: MATCH_TYPE.ONE_ON_ONE,
       players: this.$state.players
     })
-    this.initPongGame();
+    this.initPongGame().then(()=>{
     PongManager.notify({
       type: 'WAIT',
       data: {
-        onClick: ()=>{
-          this.pongGame.start();
+        onClick: this.pongGame.start,
         },
         message: "게임 스타트"
-      }});
-  }
+        })
+      });
+    }
+    
 
   async initPongGame(){
     this.pongGame = new PongGame();
     const key1 = new KeyboardController(37, 39);
     const key2 = new KeyboardController(65, 68);
     await this.pongGame.init(key1, key2, "pong-game-container", MATCH_TYPE.ONE_ON_ONE);
+  }
+
+  componentWillUnmount(){
+    this.pongGame.destroy();
   }
 }
