@@ -1,9 +1,20 @@
 import Component from "../common/Component.js"
 import CSSLaoder from "../common/CSSLoader.js"
+import { Router } from "../common/Router.js";
 
 export default class HomePage extends Component {
   setup() {
     CSSLaoder.load('homePage');
+  }
+
+  setEvent(){
+    this.$target.addEventListener('click', (e)=>{
+      // e.preventDefault();
+      if (e.target.closest('#LoginButton')){
+        Router.push('/');
+      }
+    });
+    
   }
 
   template() {

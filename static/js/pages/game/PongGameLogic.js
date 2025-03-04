@@ -71,7 +71,7 @@ export class PongGameLogic {
 		//
 		this.update = this.#update.bind(this);
 		this.loop = this.loop.bind(this);
-		this.targetScore = 1;
+		this.targetScore = 5;
 		// 도달하면
 		this.pauseDuration = 1500;
 		this.startTime = null;
