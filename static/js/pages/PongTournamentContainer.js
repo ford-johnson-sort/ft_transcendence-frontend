@@ -52,7 +52,6 @@ export default class PongTournamentContainer extends Component {
         this.tournament.addResult(data.winner);
         const next = this.tournament.next();
         if (next.done) {
-          console.log("SEEEEX");
           return ;
         }
         this.setState({ currentMatch: next.value, isEnd: next.done });

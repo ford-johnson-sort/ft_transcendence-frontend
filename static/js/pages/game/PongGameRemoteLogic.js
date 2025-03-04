@@ -1,12 +1,12 @@
 import { Controller } from "./controller/Controller.js";
 import { PongGameRenderer } from "./PongGameRenderer.js";
 import PongManager from "./PongManager.js";
-import { MOVEMENT, GAME_MODE } from "../../constants/constants.js";
+import { MOVEMENT, GAME_MODE, MATCH_TYPE } from "../../constants/constants.js";
 
 
 export class PongGameRemoteLogic {
 	constructor(controller1, controller2) {
-		const {roomID: UUID, username} = PongManager.getState();
+		const {roomID: UUID, username} = PongManager.getState({matchType: MATCH_TYPE.REMOTE});
 		// socket connection
 		this.socket = new WebSocket(`wss://${window.location.host}/game/ws/pong/${UUID}/${username}`);
 		this.socket.onmessage = (event)=> {
